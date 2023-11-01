@@ -1,3 +1,14 @@
+/*
+    menu:
+
+    1.Admin(aca se van a registrar los candidatos y los usuarios)
+
+    2.usuarios(aca es donde los usuarios van a votar , para poder acceder se tiene que verificar que los votantes esten ya registrados
+    y como segunda opcion que no hayan ejercid su voto)
+
+
+*/
+
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
@@ -8,23 +19,51 @@ struct
     char password[20];
 }admin;
 
-char login_admin(FILE *admin);
-
+char login_admin(FILE *admin); //donde se analiza el inicio de sesion del admin
 
 int main(){
-//inicio del file
+
 FILE *admin_user;
 
-int opcion_menu;
+int opcion_menu_1;
 
-char login_succesful=login_admin(admin_user);
-
-while (login_succesful=='t')
+do
 {
-    printf("----Menu----\n\n");
-    printf("1.Ingresar candidatos\n2.Ingresar usuarios\n0.salir\n\n"); 
-    printf("Digite la opcion a accerder: "); scanf("%i",&opcion_menu);
-}
+    system("cls");
+    printf("\n-----menu usuarios-----\n\n");
+    printf("1.Admin\n2.usuario\n0.salir\n\n");
+    printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
+
+    switch (opcion_menu_1)
+    {
+    case 1:
+        char login_succesful=login_admin(admin_user);
+        int menu_admin;
+
+        while (login_succesful=='t')
+        {
+            printf("\n-----menu admin-----\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n0.salir\n\n");
+            printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
+
+            switch (menu_admin)
+            {
+            case 0:
+                login_succesful='f';
+                break;
+            
+            default:
+                break;
+            }
+        }
+        
+        break;
+    
+    default:
+        break;
+    }
+} while (opcion_menu_1!=0);
+
 
 
     return 0;
