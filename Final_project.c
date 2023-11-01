@@ -12,15 +12,21 @@ char login_admin(FILE *admin);
 
 
 int main(){
+//inicio del file
 FILE *admin_user;
 
-int n;
-
-admin_user=fopen("user_admin.txt","r");
+int opcion_menu;
 
 if (login_admin(admin_user)=='t')
 {
-    printf("hola");
+    do
+    {
+        printf("----Menu----\n\n");
+        printf("1.Ingresar candidatos\n2.Ingresar usuarios\n0.salir\n\n"); 
+        printf("Digite la opcion a accerder: "); scanf("%i",&opcion_menu);
+    } while (opcion_menu!=0);
+
+
 }
 else
 {
@@ -42,6 +48,7 @@ char login_admin(FILE *admin_user){
     do
     {
         system("cls");
+        printf("\n\tinicio de sesion\n\n");
         printf("Digite el usuario: "); scanf("%s",&try_admin);
         printf("Digite la contraseña: "); scanf("%s",&try_password);
 
@@ -49,7 +56,7 @@ char login_admin(FILE *admin_user){
 
         if ((strcmp(admin.name,try_admin)==0)&&(strcmp(admin.password,try_password)==0))
         {
-            printf("Sesion iniciada!\n");
+            printf("\nSesion iniciada!\n");
             band='t';
             system("pause");
             break;
