@@ -17,25 +17,20 @@ FILE *admin_user;
 
 int opcion_menu;
 
-if (login_admin(admin_user)=='t')
+char login_succesful=login_admin(admin_user);
+
+while (login_succesful=='t')
 {
-    do
-    {
-        printf("----Menu----\n\n");
-        printf("1.Ingresar candidatos\n2.Ingresar usuarios\n0.salir\n\n"); 
-        printf("Digite la opcion a accerder: "); scanf("%i",&opcion_menu);
-    } while (opcion_menu!=0);
-
-
+    printf("----Menu----\n\n");
+    printf("1.Ingresar candidatos\n2.Ingresar usuarios\n0.salir\n\n"); 
+    printf("Digite la opcion a accerder: "); scanf("%i",&opcion_menu);
 }
-else
-{
-    printf("Sistema Finalizado!");
+
+
     return 0;
 }
 
-    return 0;
-}
+
 
 char login_admin(FILE *admin_user){
     char band='f';
