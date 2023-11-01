@@ -19,11 +19,14 @@ struct
     char password[20];
 }admin;
 
-char login_admin(FILE *admin); //donde se analiza el inicio de sesion del admin
+struct
+{
+
+}candidato;
+
+char login_admin(); //donde se analiza el inicio de sesion del admin
 
 int main(){
-
-FILE *admin_user;
 
 int opcion_menu_1;
 
@@ -37,7 +40,7 @@ do
     switch (opcion_menu_1)
     {
     case 1:
-        char login_succesful=login_admin(admin_user);
+        char login_succesful=login_admin();
         int menu_admin;
 
         while (login_succesful=='t')
@@ -58,6 +61,7 @@ do
         }
         
         break;
+    //case 2: votacion del usuario
     
     default:
         break;
@@ -71,8 +75,9 @@ do
 
 
 
-char login_admin(FILE *admin_user){
+char login_admin(){
     char band='f';
+    FILE *admin_user;
     admin_user=fopen("user_admin.txt","r");
     int n=1;
     
