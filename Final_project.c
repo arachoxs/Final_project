@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <windows.h>
+#include <stdbool.h>
 
 struct
 {
@@ -24,13 +25,24 @@ struct
 
 }candidato;
 
+struct
+{
+    char tipo_usario[30];
+    int cedula;
+    char nombre[30];
+    bool verificacion_voto;
+
+}usuario;
+
 char login_admin(); //donde se analiza el inicio de sesion del admin
+
+void registro_usuario();
 
 int main(){
 
 int opcion_menu_1;
 
-do
+do 
 {
     system("cls");
     printf("\n-----menu usuarios-----\n\n");
@@ -54,7 +66,9 @@ do
             case 0:
                 login_succesful='f';
                 break;
-            
+            case 2:
+                system("cls");
+                registro_usuario();
             default:
                 break;
             }
@@ -118,6 +132,46 @@ char login_admin(){
 
     return band;
     
+
+}
+
+void registro_usuario(){
+    FILE *archivo;
+
+    archivo=fopen("usuario.txt","a");
+
+    int tipo_usuario;
+
+    printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
+    printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
+
+    switch (tipo_usuario)
+    {
+    case 1:
+        strcpy(usuario.tipo_usario,"Docente");
+        break;
+    case 2:
+        strcpy(usuario.tipo_usario,"Estudiante");
+        break;
+    case 3:
+        strcpy(usuario.tipo_usario,"Administrativo");
+        break;
+    case 4:
+        strcpy(usuario.tipo_usario,"Egresado");
+        break;
+    default:
+        break;
+    }
+
+    printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
+
+    printf("Defina su nombre: "); scanf("%s",&usuario.nombre);
+
+    usuario.verificacion_voto=false;
+
+    fwrite(&usuario,sizeof(usuario),1,archivo);
+
+    fclose(archivo);
 
 }
 
