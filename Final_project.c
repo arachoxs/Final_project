@@ -65,6 +65,7 @@ do
 
         while (login_succesful=='t')
         {
+            system("cls");
             printf("\n-----menu admin-----\n\n");
             printf("1.registrar candidato\n2.registrar usuario\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
@@ -154,7 +155,7 @@ char login_admin(){
 void registro_usuario(){
     FILE *archivo;
 
-    archivo=fopen("usuario.txt","a");
+    archivo=fopen("usuario.txt","a+");
 
     int tipo_usuario;
 
@@ -210,6 +211,8 @@ void votacion(){
     FILE *archivo_candidato;
     FILE *archivo_usuario;
 
+    char verifiacion_usuario_encontrado='f';
+
     archivo_usuario=fopen("usuario.txt","r");
 
     int numero_cedula;
@@ -220,6 +223,7 @@ void votacion(){
     {
         if (numero_cedula==usuario.cedula)
         {
+            verifiacion_usuario_encontrado='t';
             system("cls");
             printf("\n\tBienvenido %s!!\n\n",usuario.nombre);
             printf("Recuerde ejercer su voto a conciencia por una mejor UTP!\n\n");
@@ -253,16 +257,16 @@ void votacion(){
             }
             
             
-        }
-        else
-        {
-            system("cls");
-            printf("\n\tUsuario no registrado en la base de datos!\n\n");
-            system("pause");
-        }
-        
-        
+        }        
     }
+
+    if (verifiacion_usuario_encontrado=='f')
+    {
+        system("cls");
+        printf("\n\tUsuario no registrado en la base de datos!\n\n");
+        system("pause");
+    }
+    
     
     
 }
