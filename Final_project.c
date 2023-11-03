@@ -22,6 +22,10 @@ struct
 
 struct
 {
+    int cedula;
+    char nombre[30];
+    int numero_candidato;
+    int numero_votos;
 
 }candidato;
 
@@ -37,6 +41,8 @@ struct
 char login_admin(); //donde se analiza el inicio de sesion del admin
 
 void registro_usuario();
+
+void registro_candidato();
 
 int main(){
 
@@ -66,9 +72,14 @@ do
             case 0:
                 login_succesful='f';
                 break;
+            case 1:
+                system("cls");
+                registro_candidato();
+                break;
             case 2:
                 system("cls");
                 registro_usuario();
+                break;
             default:
                 break;
             }
@@ -175,3 +186,17 @@ void registro_usuario(){
 
 }
 
+void registro_candidato(){
+    FILE *archivo;
+
+    archivo=fopen("candidatos.txt","a");
+
+    printf("Digite su cedula: "); scanf("%i",&candidato.cedula);
+    printf("Digite su nombre: "); scanf("%s",&candidato.nombre);
+    printf("Digite su numero de registro: "); scanf("%i",&candidato.numero_candidato);
+    candidato.numero_votos=0;
+
+    fwrite(&candidato,sizeof(candidato),1,archivo);
+
+    fclose(archivo);
+}
