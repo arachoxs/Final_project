@@ -44,6 +44,8 @@ void registro_usuario();
 
 void registro_candidato();
 
+void votacion();
+
 int main(){
 
 int opcion_menu_1;
@@ -86,7 +88,10 @@ do
         }
         
         break;
-    //case 2: votacion del usuario
+    case 2:
+        system("cls");
+        votacion();
+        break;
     
     default:
         break;
@@ -178,7 +183,7 @@ void registro_usuario(){
 
     printf("Defina su nombre: "); scanf("%s",&usuario.nombre);
 
-    usuario.verificacion_voto=false;
+    usuario.verificacion_voto=true; //true significa que no ha votado
 
     fwrite(&usuario,sizeof(usuario),1,archivo);
 
@@ -199,4 +204,65 @@ void registro_candidato(){
     fwrite(&candidato,sizeof(candidato),1,archivo);
 
     fclose(archivo);
+}
+
+void votacion(){
+    FILE *archivo_candidato;
+    FILE *archivo_usuario;
+
+    archivo_usuario=fopen("usuario.txt","r");
+
+    int numero_cedula;
+
+    printf("Digite su numero de cedula: "); scanf("%i",&numero_cedula);
+
+    while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+    {
+        if (numero_cedula==usuario.cedula)
+        {
+            system("cls");
+            printf("\n\tBienvenido %s!!\n\n",usuario.nombre);
+            printf("Recuerde ejercer su voto a conciencia por una mejor UTP!\n\n");
+            system("pause");
+            if (usuario.verificacion_voto)
+            {
+                system("cls");
+                int seleccion_voto;
+                archivo_candidato=fopen("candidatos.txt","r");
+
+                printf("\n\tCandidatos con su numeral: \n\n");
+
+
+                while((fread(&candidato,sizeof(candidato),1,archivo_candidato))==1){
+                    printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
+                }
+
+                fclose(archivo_candidato);
+
+                printf("\nDigite el numeral del candidato a seleccionar: "); scanf("%i",&seleccion_voto);
+                //Establecer un bucle donde se siga haciendo la pregunta hasta que se ponga un numero que sea referente a un candidato.
+                //hacer el procedimiento donde se agrega uno a la cantidad de votos del candidato y se le setea false a la verificacion de voto del usuario
+
+                break;
+            }
+            else
+            {
+                system("cls");
+                printf("\n\tEl usuario ya ejercio su derecho al voto\n\n");
+                system("pause");
+            }
+            
+            
+        }
+        else
+        {
+            system("cls");
+            printf("\n\tUsuario no registrado en la base de datos!\n\n");
+            system("pause");
+        }
+        
+        
+    }
+    
+    
 }
