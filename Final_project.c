@@ -361,8 +361,6 @@ void votacion(){
         
 }
 
-//hazme una funcion que muestre el archivo candidatos.txt y todo su contenido
-
 void mostrar_candidatos(){
     FILE *archivo_candidato;
 
@@ -378,8 +376,6 @@ void mostrar_candidatos(){
     system("pause");
 
 }
-
-//hazme una funcion que muestre el archivo usuarios.txt y todo su contenido
 
 void mostrar_usuarios(){
     FILE *archivo_usuario;
