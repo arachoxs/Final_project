@@ -1,7 +1,7 @@
 /*
     menu:
 
-    1.Admin(aca se van a registrar los candidatos y los usuarios)
+    
 
     2.usuarios(aca es donde los usuarios van a votar , para poder acceder se tiene que verificar que los votantes esten ya registrados
     y como segunda opcion que no hayan ejercid su voto)
@@ -159,26 +159,31 @@ void registro_usuario(){
 
     int tipo_usuario;
 
-    printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
-    printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
+        
+        printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
+        printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
 
-    switch (tipo_usuario)
-    {
-    case 1:
-        strcpy(usuario.tipo_usario,"Docente");
-        break;
-    case 2:
-        strcpy(usuario.tipo_usario,"Estudiante");
-        break;
-    case 3:
-        strcpy(usuario.tipo_usario,"Administrativo");
-        break;
-    case 4:
-        strcpy(usuario.tipo_usario,"Egresado");
-        break;
-    default:
-        break;
-    }
+        switch (tipo_usuario)
+        {
+        case 1:
+            strcpy(usuario.tipo_usario,"Docente");
+            break;
+        case 2:
+            strcpy(usuario.tipo_usario,"Estudiante");
+            break;
+        case 3:
+            strcpy(usuario.tipo_usario,"Administrativo");
+            break;
+        case 4:
+            strcpy(usuario.tipo_usario,"Egresado");
+            break;
+        default:
+            break;
+        }
+
+ 
+    
+
 
     printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
 
@@ -209,9 +214,14 @@ void registro_candidato(){
 
 void votacion(){
     FILE *archivo_candidato;
-    FILE *archivo_usuario;
+    FILE *temporal_candidato;
 
-    char verifiacion_usuario_encontrado='f';
+    FILE *archivo_usuario;
+    FILE *temporal_usuario;
+
+    char verificacion_usuario_encontrado='f';
+
+    char verificacion_voto_correcto='f';
 
     archivo_usuario=fopen("usuario.txt","r");
 
@@ -223,7 +233,7 @@ void votacion(){
     {
         if (numero_cedula==usuario.cedula)
         {
-            verifiacion_usuario_encontrado='t';
+            verificacion_usuario_encontrado='t';
             system("cls");
             printf("\n\tBienvenido %s!!\n\n",usuario.nombre);
             printf("Recuerde ejercer su voto a conciencia por una mejor UTP!\n\n");
@@ -232,6 +242,7 @@ void votacion(){
             {
                 system("cls");
                 int seleccion_voto;
+
                 archivo_candidato=fopen("candidatos.txt","r");
 
                 printf("\n\tCandidatos con su numeral: \n\n");
@@ -243,11 +254,41 @@ void votacion(){
 
                 fclose(archivo_candidato);
 
-                printf("\nDigite el numeral del candidato a seleccionar: "); scanf("%i",&seleccion_voto);
+                do
+                {
+                    temporal_candidato=fopen("candidatos_temporal.txt","w");
+                    archivo_candidato=fopen("candidatos.txt","r");
+
+                    printf("\nDigite el numeral del candidato a seleccionar: "); scanf("%i",&seleccion_voto);
+
+                    while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+                    {
+                        if (candidato.numero_candidato==seleccion_voto)
+                        {   
+                            verificacion_voto_correcto='t';
+                            candidato.numero_votos+=1;
+                            fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+                        }
+                        else
+                        {
+                            fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+                        }
+                        
+                        
+                    }
+
+                    fclose(archivo_candidato);
+                    fclose(temporal_candidato);
+                    remove("candidatos.txt");
+                    rename("candidatos_temporal.txt","candidatos.txt");
+                    
+                } while (verificacion_voto_correcto=='f');
+                
+
                 //Establecer un bucle donde se siga haciendo la pregunta hasta que se ponga un numero que sea referente a un candidato.
+                //se puede crear una bandera que en medio del bucle donde recorre todo el archivo y si se encuentra el numero se vuelve true 
                 //hacer el procedimiento donde se agrega uno a la cantidad de votos del candidato y se le setea false a la verificacion de voto del usuario
 
-                break;
             }
             else
             {
@@ -260,13 +301,40 @@ void votacion(){
         }        
     }
 
-    if (verifiacion_usuario_encontrado=='f')
+    fclose(archivo_usuario);
+
+
+    if (verificacion_usuario_encontrado=='f')
     {
         system("cls");
         printf("\n\tUsuario no registrado en la base de datos!\n\n");
         system("pause");
     }
+    else
+    {
+        archivo_usuario=fopen("usuario.txt","r");
+        temporal_usuario=fopen("usuario_temporal.txt","w");
+
+        while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+        {
+            if (usuario.cedula==numero_cedula)
+            {
+                usuario.verificacion_voto=false;
+                fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+            }
+            else
+            {
+                fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+            }
+        }
+
+
+        fclose(archivo_usuario);
+        fclose(temporal_usuario);
+
+        remove("usuario.txt");
+        rename("usuario_temporal.txt","usuario.txt");
+    }
     
-    
-    
+        
 }
