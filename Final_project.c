@@ -483,22 +483,25 @@ void limpiar_archivos(){
         case 1:
             archivo_candidatos=fopen("candidatos.txt","w");
             fclose(archivo_candidatos);
-            printf("cls");
-            printf("archivo reseteado!");
+            system("cls");
+            printf("\n\tarchivo reseteado!\n\n");
+            system("pause");
             break;
         case 2:
             archivo_usuarios=fopen("usuario.txt","w");
             fclose(archivo_usuarios);
-            printf("cls");
-            printf("archivo reseteado!");
+            system("cls");
+            printf("\n\tarchivo reseteado!\n\n");
+            system("pause");
             break;
         case 3:
             archivo_candidatos=fopen("candidatos.txt","w");
             archivo_usuarios=fopen("usuario.txt","w");
             fclose(archivo_candidatos);
             fclose(archivo_usuarios);
-            printf("cls");
-            printf("archivos reseteado!");
+            system("cls");
+            printf("\n\tarchivos reseteado!\n\n");
+            system("pause");
             break;
         default:
             break;
