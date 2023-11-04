@@ -52,6 +52,8 @@ void mostrar_usuarios();
 
 void resetear();
 
+void limpiar_archivos();
+
 int main(){
 
 int opcion_menu_1;
@@ -73,7 +75,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.resetear votos y verifiaciones\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.Resetear votos y verifiaciones\n6.Resetear archivos\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -100,6 +102,10 @@ do
             case 5:
                 system("cls");
                 resetear();
+                break;
+            case 6:
+                system("cls");
+                limpiar_archivos();
                 break;
             default:
                 break;
@@ -177,7 +183,8 @@ void registro_usuario(){
 
     int tipo_usuario;
 
-        
+    do{
+        system("cls");
         printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
         printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
 
@@ -198,11 +205,8 @@ void registro_usuario(){
         default:
             break;
         }
-
+    }while(tipo_usuario<1||tipo_usuario>4);
  
-    
-
-
     printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
 
     printf("Defina su nombre: "); scanf("%s",&usuario.nombre);
@@ -432,4 +436,44 @@ void resetear(){
     system("cls");
     printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
     system("pause");
+}
+
+void limpiar_archivos(){
+    int opcion;
+    FILE *archivo_candidatos;
+    FILE *archivo_usuarios;
+
+    do
+    {
+        system("cls");
+        printf("\n\tQue desea hacer?\n\n1.resetar lista candidatos\n2.resetear lista usuarios\n3.resetear ambas\n0.cancelar\n");
+        printf("\nseleccione opcion: "); scanf("%i",&opcion);
+
+        switch (opcion)
+        {
+        case 1:
+            archivo_candidatos=fopen("candidatos.txt","w");
+            fclose(archivo_candidatos);
+            printf("cls");
+            printf("archivo reseteado!");
+            break;
+        case 2:
+            archivo_usuarios=fopen("usuario.txt","w");
+            fclose(archivo_usuarios);
+            printf("cls");
+            printf("archivo reseteado!");
+            break;
+        case 3:
+            archivo_candidatos=fopen("candidatos.txt","w");
+            archivo_usuarios=fopen("usuario.txt","w");
+            fclose(archivo_candidatos);
+            fclose(archivo_usuarios);
+            printf("cls");
+            printf("archivos reseteado!");
+            break;
+        default:
+            break;
+        }
+        
+    } while (opcion<0||opcion>3);
 }
