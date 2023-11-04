@@ -206,6 +206,8 @@ void registro_usuario(){
             break;
         }
     }while(tipo_usuario<1||tipo_usuario>4);
+
+    system("cls");
  
     printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
 
@@ -216,6 +218,13 @@ void registro_usuario(){
     fwrite(&usuario,sizeof(usuario),1,archivo);
 
     fclose(archivo);
+
+    system("cls");
+
+    printf("\n\tUsuario agregado\n\n");
+
+    system("pause");
+    
 
 }
 
@@ -232,6 +241,12 @@ void registro_candidato(){
     fwrite(&candidato,sizeof(candidato),1,archivo);
 
     fclose(archivo);
+
+    system("cls");
+
+    printf("\n\tCandidato agregado\n\n");
+
+    system("pause");
 }
 
 void votacion(){
