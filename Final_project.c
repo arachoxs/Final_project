@@ -46,6 +46,12 @@ void registro_candidato();
 
 void votacion();
 
+void mostrar_candidatos();
+
+void mostrar_usuarios();
+
+void resetear();
+
 int main(){
 
 int opcion_menu_1;
@@ -67,7 +73,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.resetear votos y verifiaciones\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -82,6 +88,18 @@ do
             case 2:
                 system("cls");
                 registro_usuario();
+                break;
+            case 3:
+                system("cls");
+                mostrar_candidatos();
+                break;
+            case 4:
+                system("cls");
+                mostrar_usuarios();
+                break;
+            case 5:
+                system("cls");
+                resetear();
                 break;
             default:
                 break;
@@ -337,4 +355,81 @@ void votacion(){
     }
     
         
+}
+
+//hazme una funcion que muestre el archivo candidatos.txt y todo su contenido
+
+void mostrar_candidatos(){
+    FILE *archivo_candidato;
+
+    archivo_candidato=fopen("candidatos.txt","r");
+
+    while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+    {
+        printf("%i %s %i\n",candidato.cedula,candidato.nombre,candidato.numero_votos);
+    }
+    
+    fclose(archivo_candidato);
+
+    system("pause");
+
+}
+
+//hazme una funcion que muestre el archivo usuarios.txt y todo su contenido
+
+void mostrar_usuarios(){
+    FILE *archivo_usuario;
+
+    archivo_usuario=fopen("usuario.txt","r");
+
+    while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+    {
+        printf("%i %s %s %i\n",usuario.cedula,usuario.nombre,usuario.tipo_usario,usuario.verificacion_voto);
+    }
+    
+    fclose(archivo_usuario);
+
+    system("pause");
+}
+
+void resetear(){
+    FILE *archivo_candidato;
+    FILE *temporal_candidato;
+
+    archivo_candidato=fopen("candidatos.txt","r");
+    temporal_candidato=fopen("candidatos_temporal.txt","w");
+
+    while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+    {
+        candidato.numero_votos=0;
+        fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+    }
+
+    fclose(archivo_candidato);
+    fclose(temporal_candidato);
+
+    remove("candidatos.txt");
+    rename("candidatos_temporal.txt","candidatos.txt");
+
+    FILE *archivo_usuario;
+    FILE *temporal_usuario;
+
+    archivo_usuario=fopen("usuario.txt","r");
+    temporal_usuario=fopen("usuario_temporal.txt","w");
+
+    while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+    {
+        usuario.verificacion_voto=true;
+        fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+    }
+
+    fclose(archivo_usuario);
+    fclose(temporal_usuario);
+
+    remove("usuario.txt");
+    rename("usuario_temporal.txt","usuario.txt");
+
+    system("cls");
+    printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
+    system("pause");
 }
