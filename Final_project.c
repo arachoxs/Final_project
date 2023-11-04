@@ -403,45 +403,68 @@ void mostrar_usuarios(){
 }
 
 void resetear(){
-    FILE *archivo_candidato;
-    FILE *temporal_candidato;
-
-    archivo_candidato=fopen("candidatos.txt","r");
-    temporal_candidato=fopen("candidatos_temporal.txt","w");
-
-    while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+    int confirmacion_reset;
+    do
     {
-        candidato.numero_votos=0;
-        fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
-    }
+        system("cls");
+        printf("\n\tEsta seguro?\n\n");
+        printf("1.si\t2.no\n\n");
+        printf("digite opcion:"); scanf("%i",&confirmacion_reset);
+        switch (confirmacion_reset)
+        {
+        case 1:
+            FILE *archivo_candidato;
+            FILE *temporal_candidato;
 
-    fclose(archivo_candidato);
-    fclose(temporal_candidato);
+            archivo_candidato=fopen("candidatos.txt","r");
+            temporal_candidato=fopen("candidatos_temporal.txt","w");
 
-    remove("candidatos.txt");
-    rename("candidatos_temporal.txt","candidatos.txt");
+            while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+            {
+                candidato.numero_votos=0;
+                fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+            }
 
-    FILE *archivo_usuario;
-    FILE *temporal_usuario;
+            fclose(archivo_candidato);
+            fclose(temporal_candidato);
 
-    archivo_usuario=fopen("usuario.txt","r");
-    temporal_usuario=fopen("usuario_temporal.txt","w");
+            remove("candidatos.txt");
+            rename("candidatos_temporal.txt","candidatos.txt");
 
-    while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
-    {
-        usuario.verificacion_voto=true;
-        fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
-    }
+            FILE *archivo_usuario;
+            FILE *temporal_usuario;
 
-    fclose(archivo_usuario);
-    fclose(temporal_usuario);
+            archivo_usuario=fopen("usuario.txt","r");
+            temporal_usuario=fopen("usuario_temporal.txt","w");
 
-    remove("usuario.txt");
-    rename("usuario_temporal.txt","usuario.txt");
+            while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+            {
+                usuario.verificacion_voto=true;
+                fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+            }
 
-    system("cls");
-    printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
-    system("pause");
+            fclose(archivo_usuario);
+            fclose(temporal_usuario);
+
+            remove("usuario.txt");
+            rename("usuario_temporal.txt","usuario.txt");
+
+            system("cls");
+            printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
+            system("pause");
+            break;
+        case 2:
+            system("cls");
+            printf("\n\tReseteo cancelado\n\n");
+            system("pause");
+            break;
+        default:
+            break;
+        }
+        
+    } while (confirmacion_reset<0||confirmacion_reset>2);
+    
+    
 }
 
 void limpiar_archivos(){
