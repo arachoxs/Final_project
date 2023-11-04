@@ -305,12 +305,7 @@ void votacion(){
                     rename("candidatos_temporal.txt","candidatos.txt");
                     
                 } while (verificacion_voto_correcto=='f');
-                
-
-                //Establecer un bucle donde se siga haciendo la pregunta hasta que se ponga un numero que sea referente a un candidato.
-                //se puede crear una bandera que en medio del bucle donde recorre todo el archivo y si se encuentra el numero se vuelve true 
-                //hacer el procedimiento donde se agrega uno a la cantidad de votos del candidato y se le setea false a la verificacion de voto del usuario
-
+            
             }
             else
             {
