@@ -595,8 +595,11 @@ void eleccion_rector(){
 
     system("pause");
     */
-    
+    //luego se pasaran los 3 primeros de la lista al archivo.txt, y se mostraran con su respectivo porcentaje
+    //segun los votos que obtuvieron 
+    //se muestra un menu donde los superiores eligen el nuevo rector.
+    //se borran el resto de candidatos de la lista , y se imprime un mensaje donde se muestra el nombre del nuevo rector.   
 
-    
+
     
 }
