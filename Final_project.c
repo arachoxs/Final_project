@@ -23,7 +23,7 @@ struct
 struct
 {
     int cedula;
-    char nombre[30];
+    char nombre[50];
     int numero_candidato;
     int numero_votos;
 
@@ -33,7 +33,7 @@ struct
 {
     char tipo_usario[30];
     int cedula;
-    char nombre[30];
+    char nombre[50];
     bool verificacion_voto;
 
 }usuario;
@@ -53,6 +53,11 @@ void mostrar_usuarios();
 void resetear();
 
 void limpiar_archivos();
+
+void eleccion_rector();
+
+//main------------
+bool sistema_funcionando=true;
 
 int main(){
 
@@ -114,8 +119,17 @@ do
         
         break;
     case 2:
-        system("cls");
-        votacion();
+        if (sistema_funcionando)
+        {
+            system("cls");
+            votacion();
+        }
+        else
+        {
+            printf("El sistema ya a sido cerrado porque ya se selecciono el rector!");
+        }
+        
+        
         break;
     
     default:
@@ -211,7 +225,9 @@ void registro_usuario(){
  
     printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
 
-    printf("Defina su nombre: "); scanf("%s",&usuario.nombre);
+    getchar();
+    printf("Defina su nombre: "); fgets(usuario.nombre, 50, stdin);
+    usuario.nombre[strcspn(usuario.nombre, "\n")] = '\0';
 
     usuario.verificacion_voto=true; //true significa que no ha votado
 
@@ -234,7 +250,9 @@ void registro_candidato(){
     archivo=fopen("candidatos.txt","a");
 
     printf("Digite su cedula: "); scanf("%i",&candidato.cedula);
-    printf("Digite su nombre: "); scanf("%s",&candidato.nombre);
+    getchar();
+    printf("Digite su nombre: "); fgets(candidato.nombre, 50, stdin);
+    candidato.nombre[strcspn(candidato.nombre, "\n")] = '\0';
     printf("Digite su numero de registro: "); scanf("%i",&candidato.numero_candidato);
     candidato.numero_votos=0;
 
@@ -508,4 +526,8 @@ void limpiar_archivos(){
         }
         
     } while (opcion<0||opcion>3);
+}
+
+void eleccion_rector(){
+    
 }
