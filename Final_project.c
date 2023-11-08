@@ -20,7 +20,7 @@ struct
     char password[20];
 }admin;
 
-struct
+struct candidatos
 {
     int cedula;
     char nombre[50];
@@ -59,6 +59,8 @@ void eleccion_rector();
 //main------------
 bool sistema_funcionando=true;
 
+int numero_candidatos=6;
+
 int main(){
 
 int opcion_menu_1;
@@ -80,7 +82,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.Resetear votos y verifiaciones\n6.Resetear archivos\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.Resetear votos y verifiaciones\n6.Resetear archivos\n7.eleccion_rector\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -111,6 +113,10 @@ do
             case 6:
                 system("cls");
                 limpiar_archivos();
+                break;
+            case 7:
+                system("cls");
+                eleccion_rector();
                 break;
             default:
                 break;
@@ -529,5 +535,25 @@ void limpiar_archivos(){
 }
 
 void eleccion_rector(){
+    struct candidatos lista_candidatos[numero_candidatos];
+
+    FILE *archivo_candidato;
+
+    archivo_candidato=fopen("candidatos.txt","r");
+
+    int posicion_lista=0;
+
+    while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+    {
+        lista_candidatos[posicion_lista]=candidato;
+        posicion_lista++;
+    }
+    
+    fclose(archivo_candidato);
+
+    //se ordena la lista de mayor a menor segun los votos y luego se pasan solo los 3 primeros mayores de la lista a el archivo candidatos
+    //luego de hacer esto se pone en false la variable sistema_funcionando porque ya se cierran las elecciones y luego se pone un menu donde 
+    //un superior inicie sesion y se elija un rector 
+    
     
 }
