@@ -536,12 +536,16 @@ void limpiar_archivos(){
 }
 
 void eleccion_rector(){
+    
     int numero_candidatos;
+
+    int candidato_ganador;
+
     printf("Confirme el numero de candidatos: ");  scanf("%i",&numero_candidatos);
 
     struct candidatos lista_candidatos[numero_candidatos];
 
-    int numero_total_votos=0;
+    float numero_total_votos=0;
 
     int posicion_lista=0;
 
@@ -579,26 +583,32 @@ void eleccion_rector(){
         }
         
     }
-
-    //aca ya se ordenaron los candidatos de mayor a menor en la lista
-    /* mostrar
-    for (int i = 0; i < numero_candidatos; i++)
+    do
     {
-        printf("la cedula del candidato %i: %i\n",i+1,lista_candidatos[i].cedula); 
-        printf("el nombre del candidato %i: %s\n",i+1,lista_candidatos[i].nombre); 
-        printf("el numero del candidato %i: %i\n",i+1,lista_candidatos[i].numero_candidato);
-        printf("el numero de votos%i: %i\n",i+1,lista_candidatos[i].numero_votos); 
+        system("cls");
 
-        printf("\n");
+        printf("\t\t\tCandidatos con mas votos\n\n\n");
 
-    }
+        printf("Nro\tNombre\t\t\t\t\tNumero de votos\t\tporcentaje\t\n\n");
 
-    system("pause");
-    */
-    //luego se pasaran los 3 primeros de la lista al archivo.txt, y se mostraran con su respectivo porcentaje
-    //segun los votos que obtuvieron 
-    //se muestra un menu donde los superiores eligen el nuevo rector.
-    //se borran el resto de candidatos de la lista , y se imprime un mensaje donde se muestra el nombre del nuevo rector.   
+        //aca ya se ordenaron los candidatos de mayor a menor en la lista
+        for (int i = 0; i < 3; i++)
+        {
+            
+            double porcentaje=lista_candidatos[i].numero_votos/numero_total_votos;
+
+            printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos,porcentaje*100);
+
+            printf("\n\n");
+
+        }
+
+        printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&candidato_ganador);
+    } while ((candidato_ganador!=lista_candidatos[0].numero_candidato)&&(candidato_ganador!=lista_candidatos[1].numero_candidato)&&(candidato_ganador!=lista_candidatos[2].numero_candidato));
+
+
+    
+      
 
 
     
