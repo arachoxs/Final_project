@@ -42,7 +42,9 @@ void registro_usuario();
 
 void registro_candidato();
 
-void votacion();
+void menu_votacion();
+
+void votacion(char tipo_usuario[20]);
 
 void mostrar_candidatos();
 
@@ -78,8 +80,8 @@ do
     printf("\n-----menu usuarios-----\n\n");
 
     //cambio menu 1.administrados 2.votacion(debe haber una urna para cada tipo de usuario) 3.histogramas 4.vota final superiores
-    
-    printf("1.Admin\n2.usuario\n0.salir\n\n");
+
+    printf("1.Administrador\n2.Votaciones\n3.Histogramas\n4.Voto final superiores\n0.salir\n\n");
     printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
 
     switch (opcion_menu_1)
@@ -138,7 +140,7 @@ do
         if (validacion_votaciones_abiertas)
         {
             system("cls");
-            votacion();
+            menu_votacion();
         }
         else
         {
@@ -310,7 +312,39 @@ void registro_candidato(){
     system("pause");
 }
 
-void votacion(){
+void menu_votacion(){
+    int seleccion_urna;
+    FILE *archivo_usuario;
+    int cedula_usuario;
+    do
+    {
+        system("cls");
+        printf("\n\tSeleccione la urna a entrar\n\n");
+        printf("1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n0.salir\n\n");
+        printf("Digite su opcion: "); scanf("%i",&seleccion_urna);
+        system("cls");
+        switch (seleccion_urna)
+        {
+        case 1:
+            votacion("Docente");
+            break;
+        case 2:
+            votacion("Estudiante");
+            break;
+        case 3:
+            votacion("Administrativo");
+            break;
+        case 4:
+            votacion("Egresado");
+            break;
+        default:
+            break;
+        }
+    } while (seleccion_urna>5||seleccion_urna<1);
+    
+}
+
+void votacion(char tipo_usuario[20]){
     FILE *archivo_candidato;
     FILE *temporal_candidato;
 
@@ -321,6 +355,8 @@ void votacion(){
 
     char verificacion_voto_correcto='f';
 
+    int seleccion_voto;
+
     archivo_usuario=fopen("usuario.txt","r");
 
     int numero_cedula;
@@ -329,7 +365,7 @@ void votacion(){
 
     while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
     {
-        if (numero_cedula==usuario.cedula)
+        if (numero_cedula==usuario.cedula&&(strcmp(usuario.tipo_usario,tipo_usuario)==0))
         {
             verificacion_usuario_encontrado='t';
             system("cls");
@@ -339,7 +375,6 @@ void votacion(){
             if (usuario.verificacion_voto)
             {
                 system("cls");
-                int seleccion_voto;
 
                 archivo_candidato=fopen("candidatos.txt","r");
 
@@ -391,7 +426,7 @@ void votacion(){
             }
             
             
-        }        
+        }           
     }
 
     fclose(archivo_usuario);
@@ -400,7 +435,7 @@ void votacion(){
     if (verificacion_usuario_encontrado=='f')
     {
         system("cls");
-        printf("\n\tUsuario no registrado en la base de datos!\n\n");
+        printf("\n\tUsuario no registrado en la base de datos o urna erronea\n\n");
         system("pause");
     }
     else
@@ -427,6 +462,18 @@ void votacion(){
 
         remove("usuario.txt");
         rename("usuario_temporal.txt","usuario.txt");
+
+        FILE *archivo_registro;
+
+        archivo_registro=fopen("registro_voto.txt","a");
+
+        registro_voto.numero_candidato_votado=seleccion_voto;
+        
+        strcpy (registro_voto.tipo_usuario,tipo_usuario);
+
+        fwrite(&registro_voto,sizeof(registro_voto),1,archivo_registro);
+
+        fclose(archivo_registro);
     }
     
         
@@ -510,6 +557,11 @@ void resetear(){
             remove("usuario.txt");
             rename("usuario_temporal.txt","usuario.txt");
 
+            FILE *archivo_registro;
+
+            archivo_registro=fopen("registro_voto.txt","w");
+            fclose(archivo_registro);
+
             system("cls");
             printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
             system("pause");
@@ -532,6 +584,7 @@ void limpiar_archivos(){
     int opcion;
     FILE *archivo_candidatos;
     FILE *archivo_usuarios;
+    FILE *archivo_registro;
 
     do
     {
@@ -551,6 +604,8 @@ void limpiar_archivos(){
         case 2:
             archivo_usuarios=fopen("usuario.txt","w");
             fclose(archivo_usuarios);
+            archivo_registro=fopen("registro_voto.txt","w");
+            fclose(archivo_registro);
             system("cls");
             printf("\n\tarchivo reseteado!\n\n");
             system("pause");
