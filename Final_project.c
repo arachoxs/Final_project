@@ -29,6 +29,13 @@ struct
 
 }usuario;
 
+struct
+{
+    char tipo_usuario[30];
+    int numero_candidato_votado;
+
+}registro_voto;
+
 char login_admin(); //donde se analiza el inicio de sesion del admin
 
 void registro_usuario();
@@ -69,6 +76,9 @@ do
 {
     system("cls");
     printf("\n-----menu usuarios-----\n\n");
+
+    //cambio menu 1.administrados 2.votacion(debe haber una urna para cada tipo de usuario) 3.histogramas 4.vota final superiores
+    
     printf("1.Admin\n2.usuario\n0.salir\n\n");
     printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
 
@@ -200,8 +210,34 @@ char login_admin(){
 
 void registro_usuario(){
     FILE *archivo;
+    
+    int cedula_usuario_nuevo;
 
-    archivo=fopen("usuario.txt","a+");
+    printf("Defina su cedula: "); scanf("%i",&cedula_usuario_nuevo);
+
+    archivo=fopen("usuario.txt","r+");
+
+    bool cedula_nueva=true;
+
+    while (fread(&usuario,sizeof(usuario),1,archivo)==1)
+    {
+        if (usuario.cedula==cedula_usuario_nuevo)
+        {
+            cedula_nueva=false;
+        }
+        
+    }
+    
+    if (cedula_nueva==false)
+    {
+        system("cls");
+        printf("\n\tUsuario registrado\n\n");
+        system("pause");
+        return 0;
+    }
+
+
+    usuario.cedula=cedula_nueva;
 
     int tipo_usuario;
 
@@ -230,8 +266,6 @@ void registro_usuario(){
     }while(tipo_usuario<1||tipo_usuario>4);
 
     system("cls");
- 
-    printf("Defina su cedula: "); scanf("%i",&usuario.cedula);
 
     getchar();
     printf("Defina su nombre: "); fgets(usuario.nombre, 50, stdin);
