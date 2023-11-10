@@ -37,12 +37,22 @@ struct
 
 }registro_voto;
 
+struct
+{
+    char tipo_usuario[30];
+    char cargo[40];
+    int cedula;
+    char nombre[30];
+
+}superior;
 
 char login_admin(); //donde se analiza el inicio de sesion del admin
 
 void registro_usuario();
 
 void registro_candidato();
+
+void registro_superior();
 
 void menu_votacion();
 
@@ -317,6 +327,10 @@ void registro_candidato(){
     printf("\n\tCandidato agregado\n\n");
 
     system("pause");
+}
+
+void registro_superior(){
+    FILE *archivo
 }
 
 void menu_votacion(){
