@@ -40,9 +40,10 @@ struct
 struct
 {
     char tipo_usuario[30];
-    char cargo[40];
+    char cargo[60];
     int cedula;
     char nombre[30];
+    bool verificacion_voto;
 
 }superior;
 
@@ -61,6 +62,8 @@ void votacion(char tipo_usuario[20]);
 void mostrar_candidatos();
 
 void mostrar_usuarios();
+
+void mostrar_superiores();
 
 void resetear();
 
@@ -106,7 +109,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.mostrar listado candidatos\n4.mostrar listado usuarios\n5.Resetear votos y verifiaciones\n6.Resetear archivos\n7.eleccion_rector\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.Resetear votos y verifiaciones\n8.Resetear archivos\n9.eleccion_rector\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -124,21 +127,29 @@ do
                 break;
             case 3:
                 system("cls");
-                mostrar_candidatos();
+                registro_superior();
                 break;
             case 4:
                 system("cls");
-                mostrar_usuarios();
+                mostrar_candidatos();
                 break;
             case 5:
                 system("cls");
-                resetear();
+                mostrar_usuarios();
                 break;
             case 6:
                 system("cls");
-                limpiar_archivos();
+                mostrar_superiores();
                 break;
             case 7:
+                system("cls");
+                resetear();
+                break;
+            case 8:
+                system("cls");
+                limpiar_archivos();
+                break;
+            case 9:
                 system("cls");
                 eleccion_rector();
                 break;
@@ -330,7 +341,72 @@ void registro_candidato(){
 }
 
 void registro_superior(){
-    FILE *archivo
+    FILE *archivo;
+    archivo=fopen("superiores.txt","r");
+    int conteo_superiores=0;
+    bool cedula_existente=false;
+
+    int cedula;
+
+    while (fread(&superior,sizeof(superior),1,archivo)==1)
+    {
+        conteo_superiores++;
+        
+    }
+
+    fclose(archivo);
+    
+    if (conteo_superiores<9)
+    {
+        archivo=fopen("superiores.txt","r");
+
+        printf("Digite cedula: "); scanf("%i",&cedula);
+
+        while (fread(&superior,sizeof(superior),1,archivo)==1)
+        {
+
+            if (cedula==superior.cedula)
+            {
+                cedula_existente=true;
+            }
+            
+        }
+
+        fclose(archivo);
+
+        if (cedula_existente==false)
+        {
+            archivo=fopen("superiores.txt","a");
+            strcpy(superior.tipo_usuario,"Superior");
+            superior.cedula=cedula; 
+
+            getchar();
+            printf("Digite su nombre: ");  fgets(superior.nombre, 30, stdin);
+            superior.nombre[strcspn(superior.nombre, "\n")] = '\0';
+            
+            getchar();
+            printf("Digite su cargo: ");  fgets(superior.cargo, 60, stdin);
+            superior.cargo[strcspn(superior.cargo, "\n")] = '\0';
+
+            superior.verificacion_voto=true; //siginica que esta habilitado para votar
+
+            fwrite(&superior,sizeof(superior),1,archivo);
+            fclose(archivo);
+        }
+        else
+        {
+            system("cls");
+            printf("\n\tCedula ya registrada\n\n");
+            system("pause");
+        }
+        
+    }
+    else
+    {
+        system("cls");
+        printf("\n\tBase de datos de superiores llena\n\n");
+        system("pause"); 
+    }
 }
 
 void menu_votacion(){
@@ -527,6 +603,21 @@ void mostrar_usuarios(){
     }
     
     fclose(archivo_usuario);
+
+    system("pause");
+}
+
+void mostrar_superiores(){
+    FILE *archivo_superior;
+
+    archivo_superior=fopen("superiores.txt","r");
+
+    while (fread(&superior,sizeof(superior),1,archivo_superior)==1)
+    {
+        printf("%i %s %s %i\n",superior.cedula,superior.nombre,superior.tipo_usuario,superior.verificacion_voto);
+    }
+    
+    fclose(archivo_superior);
 
     system("pause");
 }
