@@ -15,7 +15,8 @@ struct candidatos
     int cedula;
     char nombre[50];
     int numero_candidato;
-    int numero_votos;
+    int numero_votos_usuarios;
+    int numero_votos_superiores;
     bool ganador;
 
 }candidato;
@@ -35,6 +36,7 @@ struct
     int numero_candidato_votado;
 
 }registro_voto;
+
 
 char login_admin(); //donde se analiza el inicio de sesion del admin
 
@@ -217,7 +219,7 @@ void registro_usuario(){
 
     printf("Defina su cedula: "); scanf("%i",&cedula_usuario_nuevo);
 
-    archivo=fopen("usuario.txt","r+");
+    archivo=fopen("usuario.txt","r");
 
     bool cedula_nueva=true;
 
@@ -229,63 +231,67 @@ void registro_usuario(){
         }
         
     }
+
+    fclose(archivo);
+
+    archivo=fopen("usuario.txt","a");
     
     if (cedula_nueva==false)
     {
         system("cls");
         printf("\n\tUsuario registrado\n\n");
         system("pause");
-        return 0;
     }
+    else
+    {
+        int tipo_usuario;
 
+        do{
+            system("cls");
+            printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
+            printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
 
-    usuario.cedula=cedula_nueva;
+            switch (tipo_usuario)
+            {
+            case 1:
+                strcpy(usuario.tipo_usario,"Docente");
+                break;
+            case 2:
+                strcpy(usuario.tipo_usario,"Estudiante");
+                break;
+            case 3:
+                strcpy(usuario.tipo_usario,"Administrativo");
+                break;
+            case 4:
+                strcpy(usuario.tipo_usario,"Egresado");
+                break;
+            default:
+                break;
+            }
+        }while(tipo_usuario<1||tipo_usuario>4);
 
-    int tipo_usuario;
-
-    do{
         system("cls");
-        printf("Defina El tipo de usuario: \n1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n"); 
-        printf("\n\nSeleccione su opcion: "); scanf("%i",&tipo_usuario);
 
-        switch (tipo_usuario)
-        {
-        case 1:
-            strcpy(usuario.tipo_usario,"Docente");
-            break;
-        case 2:
-            strcpy(usuario.tipo_usario,"Estudiante");
-            break;
-        case 3:
-            strcpy(usuario.tipo_usario,"Administrativo");
-            break;
-        case 4:
-            strcpy(usuario.tipo_usario,"Egresado");
-            break;
-        default:
-            break;
-        }
-    }while(tipo_usuario<1||tipo_usuario>4);
+        usuario.cedula=cedula_usuario_nuevo;
 
-    system("cls");
+        getchar();
+        printf("Defina su nombre: "); fgets(usuario.nombre, 50, stdin);
+        usuario.nombre[strcspn(usuario.nombre, "\n")] = '\0';
 
-    getchar();
-    printf("Defina su nombre: "); fgets(usuario.nombre, 50, stdin);
-    usuario.nombre[strcspn(usuario.nombre, "\n")] = '\0';
 
-    usuario.verificacion_voto=true; //true significa que no ha votado
+        usuario.verificacion_voto=true; //true significa que no ha votado
 
-    fwrite(&usuario,sizeof(usuario),1,archivo);
+        fwrite(&usuario,sizeof(usuario),1,archivo);
 
-    fclose(archivo);
+        fclose(archivo);
 
-    system("cls");
+        system("cls");
 
-    printf("\n\tUsuario agregado\n\n");
+        printf("\n\tUsuario agregado\n\n");
 
-    system("pause");
+        system("pause");
+    }
     
-
 }
 
 void registro_candidato(){
@@ -298,7 +304,8 @@ void registro_candidato(){
     printf("Digite su nombre: "); fgets(candidato.nombre, 50, stdin);
     candidato.nombre[strcspn(candidato.nombre, "\n")] = '\0';
     printf("Digite su numero de registro: "); scanf("%i",&candidato.numero_candidato);
-    candidato.numero_votos=0;
+    candidato.numero_votos_usuarios=0;
+    candidato.numero_votos_superiores=0;
     candidato.ganador=false;
     
     fwrite(&candidato,sizeof(candidato),1,archivo);
@@ -399,7 +406,7 @@ void votacion(char tipo_usuario[20]){
                         if (candidato.numero_candidato==seleccion_voto)
                         {   
                             verificacion_voto_correcto='t';
-                            candidato.numero_votos+=1;
+                            candidato.numero_votos_usuarios+=1;
                             fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
                         }
                         else
@@ -486,7 +493,7 @@ void mostrar_candidatos(){
 
     while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
     {
-        printf("%i %s %i\n",candidato.cedula,candidato.nombre,candidato.numero_votos);
+        printf("%i %s %i %i\n",candidato.cedula,candidato.nombre,candidato.numero_votos_usuarios,candidato.numero_votos_superiores);
     }
     
     fclose(archivo_candidato);
@@ -529,7 +536,8 @@ void resetear(){
 
             while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
             {
-                candidato.numero_votos=0;
+                candidato.numero_votos_usuarios=0;
+                candidato.numero_votos_superiores=0;
                 fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
             }
 
@@ -613,8 +621,10 @@ void limpiar_archivos(){
         case 3:
             archivo_candidatos=fopen("candidatos.txt","w");
             archivo_usuarios=fopen("usuario.txt","w");
+            archivo_registro=fopen("registro_voto.txt","w");
             fclose(archivo_candidatos);
             fclose(archivo_usuarios);
+            fclose(archivo_registro);
             system("cls");
             printf("\n\tarchivos reseteado!\n\n");
             system("pause");
@@ -648,7 +658,7 @@ void eleccion_rector(){
     while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
     {
         lista_candidatos[posicion_lista]=candidato;
-        numero_total_votos+=candidato.numero_votos;
+        numero_total_votos+=candidato.numero_votos_usuarios;
         posicion_lista++;
     }
     
@@ -663,7 +673,7 @@ void eleccion_rector(){
     {
         for (int a = 1; a < numero_candidatos; a++)
         {
-            if (lista_candidatos[a-1].numero_votos<lista_candidatos[a].numero_votos)
+            if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
             {
                 struct candidatos temporal=lista_candidatos[a-1];
                 lista_candidatos[a-1]=lista_candidatos[a];
@@ -686,9 +696,9 @@ void eleccion_rector(){
         for (int i = 0; i < 3; i++)
         {
             
-            double porcentaje=lista_candidatos[i].numero_votos/numero_total_votos;
+            double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
 
-            printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos,porcentaje*100);
+            printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
 
             printf("\n\n");
 
