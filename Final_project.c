@@ -16,6 +16,7 @@ struct candidatos
     char nombre[50];
     int numero_candidato;
     int numero_votos;
+    bool ganador;
 
 }candidato;
 
@@ -262,7 +263,8 @@ void registro_candidato(){
     candidato.nombre[strcspn(candidato.nombre, "\n")] = '\0';
     printf("Digite su numero de registro: "); scanf("%i",&candidato.numero_candidato);
     candidato.numero_votos=0;
-
+    candidato.ganador=false;
+    
     fwrite(&candidato,sizeof(candidato),1,archivo);
 
     fclose(archivo);
@@ -536,7 +538,7 @@ void limpiar_archivos(){
 }
 
 void eleccion_rector(){
-    
+
     int numero_candidatos;
 
     int candidato_ganador;
