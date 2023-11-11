@@ -743,74 +743,163 @@ void limpiar_archivos(){
 
 void eleccion_rector(){
 
-    int numero_candidatos;
+    int cedula_superior; //se usa luego para modificar la bandera voto en el superior
 
-    int candidato_ganador;
+    int seleccion_voto;
 
-    printf("Confirme el numero de candidatos: ");  scanf("%i",&numero_candidatos);
-
-    struct candidatos lista_candidatos[numero_candidatos];
-
-    float numero_total_votos=0;
-
-    int posicion_lista=0;
+    FILE *archivo_superior;
 
     FILE *archivo_candidato;
 
-    archivo_candidato=fopen("candidatos.txt","r");
+    int numero_candidatos=0;
 
+    //conteo de total candidatos
+
+    archivo_candidato=fopen("candidatos.txt","r");
 
     while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
     {
-        lista_candidatos[posicion_lista]=candidato;
-        numero_total_votos+=candidato.numero_votos_usuarios;
-        posicion_lista++;
+        numero_candidatos++;
     }
     
     fclose(archivo_candidato);
+
+    bool verificacion_votos_faltantes=false;
+
+
+    archivo_superior=fopen("superiores.txt","r");
+
+    while (fread(&superior,sizeof(superior),1,archivo_superior)==1){
+        if (superior.verificacion_voto==true)
+        {
+            verificacion_votos_faltantes=true;
+        }
+        
+    }
+
+    fclose(archivo_superior);
+
+    if (verificacion_votos_faltantes=true)
+    {
+        archivo_superior=fopen("superiores.txt","r");
+
+        printf("Señor Superior, por favor ingrese su cedula: "); scanf("%i",&cedula_superior);
+
+        while (fread(&superior,sizeof(superior),1,archivo_superior)==1)
+        {
+            if (cedula_superior==superior.cedula)
+            {
+                if (strcmp(superior.tipo_usuario,"Superior")==0)
+                {
+                    if (superior.verificacion_voto==true)
+                    {
+                        fclose(archivo_superior);
+
+                        //se inicia el proceso donde se pasa todo el contenido de candidatos a un array
+
+                        struct candidatos lista_candidatos[numero_candidatos];
+
+                        float numero_total_votos=0;
+
+                        int posicion_lista=0;
+
+                        FILE *archivo_candidato;
+
+                        archivo_candidato=fopen("candidatos.txt","r");
+
+                        while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+                        {
+                            lista_candidatos[posicion_lista]=candidato;
+                            numero_total_votos+=candidato.numero_votos_usuarios;
+                            posicion_lista++;
+                        }
+                        
+                        fclose(archivo_candidato);
+
+                        //se ordena los candidatos segun su numero de votos de mayor a menor
+
+                        for (int i = 0; i < numero_candidatos-1; i++)
+                        {
+                            for (int a = 1; a < numero_candidatos; a++)
+                            {
+                                if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
+                                {
+                                    struct candidatos temporal=lista_candidatos[a-1];
+                                    lista_candidatos[a-1]=lista_candidatos[a];
+                                    lista_candidatos[a]=temporal;
+
+                                }
+                                
+                            }
+                            
+                        }
+
+                        // se muestra los 3 con mas votos para que superior tome una desicion
+
+                        do
+                        {
+                            system("cls");
+
+                            printf("\t\t\tCandidatos con mas votos\n\n\n");
+
+                            printf("Nro\tNombre\t\t\t\t\tNumero de votos\t\tporcentaje\t\n\n");
+
+                            //aca ya se ordenaron los candidatos de mayor a menor en la lista
+                            for (int i = 0; i < 3; i++)
+                            {
+                                
+                                double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
+
+                                printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
+
+                                printf("\n\n");
+
+                            }
+
+                            printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&seleccion_voto);
+                        } while ((seleccion_voto!=lista_candidatos[0].numero_candidato)&&(seleccion_voto!=lista_candidatos[1].numero_candidato)&&(seleccion_voto!=lista_candidatos[2].numero_candidato));
+
+                        //luego se suma uno a la varible votos_superiores y se pone en false el acceso a votar del superior
+
+                    }
+                    else
+                    {
+                        system("cls");
+                        printf("\n\tUsted ya ha votado\n\n");
+                        system("pause");
+                    }
+                    
+                }
+                else
+                {
+                    system("cls");
+                    printf("\n\tUsted no es un superior\n\n");
+                    system("pause");
+                }
+                
+            }
+            else
+            {
+                system("cls");
+                printf("\n\tCedula incorrecta\n\n");
+                system("pause");
+            }
+            
+        }
+    }
+    
+
+
+
+
+
+
 
 
     //se ordena la lista de mayor a menor segun los votos y luego se pasan solo los 3 primeros mayores de la lista a el archivo candidatos
     //luego de hacer esto se pone en false la variable sistema_funcionando porque ya se cierran las elecciones y luego se pone un menu donde 
     //un superior inicie sesion y se elija un rector 
 
-    for (int i = 0; i < numero_candidatos-1; i++)
-    {
-        for (int a = 1; a < numero_candidatos; a++)
-        {
-            if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
-            {
-                struct candidatos temporal=lista_candidatos[a-1];
-                lista_candidatos[a-1]=lista_candidatos[a];
-                lista_candidatos[a]=temporal;
-
-            }
-            
-        }
-        
-    }
-    do
-    {
-        system("cls");
-
-        printf("\t\t\tCandidatos con mas votos\n\n\n");
-
-        printf("Nro\tNombre\t\t\t\t\tNumero de votos\t\tporcentaje\t\n\n");
-
-        //aca ya se ordenaron los candidatos de mayor a menor en la lista
-        for (int i = 0; i < 3; i++)
-        {
-            
-            double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
-
-            printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
-
-            printf("\n\n");
-
-        }
-
-        printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&candidato_ganador);
-    } while ((candidato_ganador!=lista_candidatos[0].numero_candidato)&&(candidato_ganador!=lista_candidatos[1].numero_candidato)&&(candidato_ganador!=lista_candidatos[2].numero_candidato));
 
 
     
