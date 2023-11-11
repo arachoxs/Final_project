@@ -49,43 +49,33 @@ struct
 
 char login_admin(); //donde se analiza el inicio de sesion del admin
 
-void registro_usuario();
+void registro_usuario(); //registro para el usuario
 
-void registro_candidato();
+void registro_candidato(); //registro para el candidato
 
-void registro_superior();
+void registro_superior(); //registro para el superior
 
-void menu_votacion();
+bool verificacion_votacion_abierta(); //verifica que las votacione esten abiertas para el usuario
 
-void votacion(char tipo_usuario[20]);
+void menu_votacion(); //menu donde estan las mesas de eleccion
 
-void mostrar_candidatos();
+void votacion(char tipo_usuario[20]); //donde se realiza la eleccion los usuarios
 
-void mostrar_usuarios();
+void mostrar_candidatos(); //muestra el archivo de candidatos
 
-void mostrar_superiores();
+void mostrar_usuarios(); //muestra el archivo de usuarios
 
-void resetear();
+void mostrar_superiores(); //muestra el archivo de superiores
 
-void limpiar_archivos();
+void resetear(); //resetea las banderas y los numeros de votos de todas los archivos
 
-void eleccion_rector();
+void limpiar_archivos(); //borra los archivos y se crean de nuevo limpios
+
+void eleccion_rector(); //menu para los superiores 
 
 //main------------
-bool validacion_votaciones_abiertas=true;
-
 
 int main(){
-
-FILE *archivo_admin;
-
-archivo_admin=fopen("user_admin.txt","r");
-
-fread(&admin,sizeof(admin),1,archivo_admin);
-
-validacion_votaciones_abiertas=admin.votaciones_abiertas; //este es un bool que determina si las votaciones estan abiertas
-
-fclose(archivo_admin);
 
 int opcion_menu_1;
 
@@ -93,8 +83,6 @@ do
 {
     system("cls");
     printf("\n-----menu usuarios-----\n\n");
-
-    //cambio menu 1.administrados 2.votacion(debe haber una urna para cada tipo de usuario) 3.histogramas 4.vota final superiores
 
     printf("1.Administrador\n2.Votaciones\n3.Histogramas\n4.Voto final superiores\n0.salir\n\n");
     printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
@@ -109,7 +97,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.Resetear votos y verifiaciones\n8.Resetear archivos\n9.eleccion_rector\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.Resetear votos y verifiaciones\n8.Resetear archivos\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -149,10 +137,6 @@ do
                 system("cls");
                 limpiar_archivos();
                 break;
-            case 9:
-                system("cls");
-                eleccion_rector();
-                break;
             default:
                 break;
             }
@@ -160,7 +144,7 @@ do
         
         break;
     case 2:
-        if (validacion_votaciones_abiertas)
+        if (verificacion_votacion_abierta())
         {
             system("cls");
             menu_votacion();
@@ -171,16 +155,18 @@ do
             printf("\n\tEl sistema esta cerrado!\n\n");
             system("pause");
         }
-        
-        
         break;
+    //falta el case 3 de los histogramas
+
+    case 4:
+        system("cls");
+        eleccion_rector();
+    break;
     
     default:
         break;
     }
 } while (opcion_menu_1!=0);
-
-
 
     return 0;
 }
@@ -409,6 +395,20 @@ void registro_superior(){
     }
 }
 
+bool verificacion_votacion_abierta(){
+    FILE *archivo_admin;
+
+    archivo_admin=fopen("user_admin.txt","r");
+
+    fread(&admin,sizeof(admin),1,archivo_admin);
+
+    fclose(archivo_admin);
+
+    return admin.votaciones_abiertas;
+
+}
+
+
 void menu_votacion(){
     int seleccion_urna;
     FILE *archivo_usuario;
@@ -471,22 +471,21 @@ void votacion(char tipo_usuario[20]){
             system("pause");
             if (usuario.verificacion_voto)
             {
-                system("cls");
-
-                archivo_candidato=fopen("candidatos.txt","r");
-
-                printf("\n\tCandidatos con su numeral: \n\n");
-
-
-                while((fread(&candidato,sizeof(candidato),1,archivo_candidato))==1){
-                    printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
-                }
-
-                fclose(archivo_candidato);
-
                 do
                 {
-                    temporal_candidato=fopen("candidatos_temporal.txt","w");
+                    system("cls");
+
+                    archivo_candidato=fopen("candidatos.txt","r");
+
+                    printf("\n\tCandidatos con su numeral: \n\n");
+
+
+                    while((fread(&candidato,sizeof(candidato),1,archivo_candidato))==1){
+                        printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
+                    }
+
+                    fclose(archivo_candidato);
+
                     archivo_candidato=fopen("candidatos.txt","r");
 
                     printf("\nDigite el numeral del candidato a seleccionar: "); scanf("%i",&seleccion_voto);
@@ -496,24 +495,32 @@ void votacion(char tipo_usuario[20]){
                         if (candidato.numero_candidato==seleccion_voto)
                         {   
                             verificacion_voto_correcto='t';
-                            candidato.numero_votos_usuarios+=1;
-                            fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+                            fclose(archivo_candidato);
+                            break;
                         }
-                        else
-                        {
-                            fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
-                        }
-                        
-                        
                     }
-
-                    fclose(archivo_candidato);
-                    fclose(temporal_candidato);
-                    remove("candidatos.txt");
-                    rename("candidatos_temporal.txt","candidatos.txt");
                     
                 } while (verificacion_voto_correcto=='f');
-            
+
+                temporal_candidato=fopen("candidatos_temporal.txt","w");
+                archivo_candidato=fopen("candidatos.txt","r");
+
+                while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+                {
+                    if (candidato.numero_candidato==seleccion_voto)
+                    {   
+                        candidato.numero_votos_usuarios+=1;
+                        fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+                    }
+                    else
+                    {
+                        fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+                    }
+                }
+                fclose(archivo_candidato);
+                fclose(temporal_candidato);
+                remove("candidatos.txt");
+                rename("candidatos_temporal.txt","candidatos.txt");
             }
             else
             {
@@ -636,6 +643,8 @@ void resetear(){
             FILE *archivo_candidato;
             FILE *temporal_candidato;
 
+            //resetea los valores de los candidatos
+
             archivo_candidato=fopen("candidatos.txt","r");
             temporal_candidato=fopen("candidatos_temporal.txt","w");
 
@@ -651,6 +660,8 @@ void resetear(){
 
             remove("candidatos.txt");
             rename("candidatos_temporal.txt","candidatos.txt");
+
+            //resetea los valores de usuarios
 
             FILE *archivo_usuario;
             FILE *temporal_usuario;
@@ -674,6 +685,30 @@ void resetear(){
 
             archivo_registro=fopen("registro_voto.txt","w");
             fclose(archivo_registro);
+
+            //resetea los valores de los superiores
+
+            FILE *archivo_superior;
+            FILE *temporal_superior;
+
+            archivo_superior=fopen("superiores.txt","r");
+
+            temporal_superior=fopen("superiores_temporal.txt","w");
+
+            while (fread(&superior,sizeof(superior),1,archivo_superior)==1)
+            {
+                superior.verificacion_voto=true;
+                fwrite(&superior,sizeof(superior),1,temporal_superior);
+            }
+
+            fclose(archivo_superior);
+
+            fclose(temporal_superior);
+
+            remove("superiores.txt");
+
+            rename("superiores_temporal.txt","superiores.txt");
+
 
             system("cls");
             printf("\n\tSe han reseteado los votos y la verificacion de votos de los usuarios\n\n");
@@ -750,8 +785,14 @@ void eleccion_rector(){
     FILE *archivo_superior;
 
     FILE *archivo_candidato;
+    
+    FILE *archivo_administrador;
 
     int numero_candidatos=0;
+
+    bool verificacion_cedula_existente=false;
+
+    bool verificacion_voto_realizado=false;
 
     //conteo de total candidatos
 
@@ -779,7 +820,7 @@ void eleccion_rector(){
 
     fclose(archivo_superior);
 
-    if (verificacion_votos_faltantes=true)
+    if (verificacion_votos_faltantes==true)
     {
         archivo_superior=fopen("superiores.txt","r");
 
@@ -789,122 +830,135 @@ void eleccion_rector(){
         {
             if (cedula_superior==superior.cedula)
             {
-                if (strcmp(superior.tipo_usuario,"Superior")==0)
-                {
-                    if (superior.verificacion_voto==true)
-                    {
-                        fclose(archivo_superior);
-
-                        //se inicia el proceso donde se pasa todo el contenido de candidatos a un array
-
-                        struct candidatos lista_candidatos[numero_candidatos];
-
-                        float numero_total_votos=0;
-
-                        int posicion_lista=0;
-
-                        FILE *archivo_candidato;
-
-                        archivo_candidato=fopen("candidatos.txt","r");
-
-                        while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
-                        {
-                            lista_candidatos[posicion_lista]=candidato;
-                            numero_total_votos+=candidato.numero_votos_usuarios;
-                            posicion_lista++;
-                        }
-                        
-                        fclose(archivo_candidato);
-
-                        //se ordena los candidatos segun su numero de votos de mayor a menor
-
-                        for (int i = 0; i < numero_candidatos-1; i++)
-                        {
-                            for (int a = 1; a < numero_candidatos; a++)
-                            {
-                                if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
-                                {
-                                    struct candidatos temporal=lista_candidatos[a-1];
-                                    lista_candidatos[a-1]=lista_candidatos[a];
-                                    lista_candidatos[a]=temporal;
-
-                                }
-                                
-                            }
-                            
-                        }
-
-                        // se muestra los 3 con mas votos para que superior tome una desicion
-
-                        do
-                        {
-                            system("cls");
-
-                            printf("\t\t\tCandidatos con mas votos\n\n\n");
-
-                            printf("Nro\tNombre\t\t\t\t\tNumero de votos\t\tporcentaje\t\n\n");
-
-                            //aca ya se ordenaron los candidatos de mayor a menor en la lista
-                            for (int i = 0; i < 3; i++)
-                            {
-                                
-                                double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
-
-                                printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
-
-                                printf("\n\n");
-
-                            }
-
-                            printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&seleccion_voto);
-                        } while ((seleccion_voto!=lista_candidatos[0].numero_candidato)&&(seleccion_voto!=lista_candidatos[1].numero_candidato)&&(seleccion_voto!=lista_candidatos[2].numero_candidato));
-
-                        //luego se suma uno a la varible votos_superiores y se pone en false el acceso a votar del superior
-
-                    }
-                    else
-                    {
-                        system("cls");
-                        printf("\n\tUsted ya ha votado\n\n");
-                        system("pause");
-                    }
-                    
-                }
-                else
-                {
-                    system("cls");
-                    printf("\n\tUsted no es un superior\n\n");
-                    system("pause");
-                }
-                
+                verificacion_cedula_existente=true;
+                fclose(archivo_superior);
+                break;
             }
-            else
-            {
-                system("cls");
-                printf("\n\tCedula incorrecta\n\n");
-                system("pause");
-            }
+            
             
         }
     }
+    //aca falta un else el cual va como ya fue elegido el ganador va a mostar un mensaje donde diga quien fue el ganador
+
+    if (verificacion_cedula_existente)
+    {
+        if (superior.verificacion_voto==true)
+        {
+            struct candidatos lista_candidatos[numero_candidatos];
+            float numero_total_votos=0;
+            int posicion_lista=0;
+            FILE *archivo_candidato;
+            archivo_candidato=fopen("candidatos.txt","r");
+            while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+            {
+                lista_candidatos[posicion_lista]=candidato;
+                numero_total_votos+=candidato.numero_votos_usuarios;
+                posicion_lista++;
+            }
+            
+            fclose(archivo_candidato);
+            //se ordena los candidatos segun su numero de votos de mayor a menor
+            for (int i = 0; i < numero_candidatos-1; i++)
+            {
+                for (int a = 1; a < numero_candidatos; a++)
+                {
+                    if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
+                    {
+                        struct candidatos temporal=lista_candidatos[a-1];
+                        lista_candidatos[a-1]=lista_candidatos[a];
+                        lista_candidatos[a]=temporal;
+                    }
+                    
+                }
+                
+            }
+            // se muestra los 3 con mas votos para que superior tome una desicion
+            do
+            {
+                system("cls");
+                printf("\t\t\tCandidatos con mas votos\n\n\n");
+                printf("Nro\tNombre\t\t\t\t\tNumero de votos\t\tporcentaje\t\n\n");
+                //aca ya se ordenaron los candidatos de mayor a menor en la lista
+                for (int i = 0; i < 3; i++)
+                {
+                    
+                    double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
+                    printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
+                    printf("\n\n");
+                }
+                printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&seleccion_voto);
+            } while ((seleccion_voto!=lista_candidatos[0].numero_candidato)&&(seleccion_voto!=lista_candidatos[1].numero_candidato)&&(seleccion_voto!=lista_candidatos[2].numero_candidato));
+            //luego se suma uno a la varible votos_superiores y se pone en false el acceso a votar del superior
+            verificacion_voto_realizado=true;
+        }
+        else
+        {
+            system("cls");
+            printf("\n\tUsted ya ha votado\n\n");
+            system("pause");
+        }
+        
+    }
+    else
+    {
+        system("cls");
+        printf("\n\tCedula incorrecta\n\n");
+        system("pause");
+    }
+
+    if (verificacion_voto_realizado)
+    {
+        FILE *temporal_superior;
+        FILE *temporal_candidato;
+ 
+        archivo_superior=fopen("superiores.txt","r");
+        temporal_superior=fopen("temporal_superior.txt","w");
+
+        while (fread(&superior,sizeof(superior),1,archivo_superior)==1)
+        {
+            if (superior.cedula==cedula_superior)
+            {
+                superior.verificacion_voto=false;
+                fwrite(&superior,sizeof(superior),1,temporal_superior);
+            }
+            else
+            {
+                fwrite(&superior,sizeof(superior),1,temporal_superior);
+            }
+        }
+
+        fclose(temporal_superior);
+        fclose(archivo_superior);
+
+        remove("superiores.txt");
+        rename("temporal_superior.txt","superiores.txt");
+
+        archivo_candidato=fopen("candidatos.txt","r");
+        temporal_candidato=fopen("temporal_candidato.txt","w");
+
+        while (fread(&candidato,sizeof(candidato),1,archivo_candidato)==1)
+        {
+            if (candidato.numero_candidato==seleccion_voto)
+            {
+                candidato.numero_votos_superiores+=1;
+                fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+            }
+            else
+            {
+                fwrite(&candidato,sizeof(candidato),1,temporal_candidato);
+            }
+        }
+
+        fclose(temporal_candidato);
+        fclose(archivo_candidato);
+
+        remove("candidatos.txt");
+        rename("temporal_candidato.txt","candidatos.txt");
+
+        //implementar funcion que cambia el estado de la posibilidad de votar del usuario
+    }
+
     
 
-
-
-
-
-
-
-
-    //se ordena la lista de mayor a menor segun los votos y luego se pasan solo los 3 primeros mayores de la lista a el archivo candidatos
-    //luego de hacer esto se pone en false la variable sistema_funcionando porque ya se cierran las elecciones y luego se pone un menu donde 
-    //un superior inicie sesion y se elija un rector 
-
-
-
-    
-      
-
-
-    
 }
+
