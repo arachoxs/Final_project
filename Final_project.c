@@ -84,7 +84,7 @@ int opcion_menu_1;
 do 
 {
     system("cls");
-    printf("\n-----menu usuarios-----\n\n");
+    printf("\n-----menu Principal-----\n\n");
 
     printf("1.Administrador\n2.consulta\n3.Histogramas\n4.Voto superiores\n5.Resultado Ganador\n0.salir\n\n");
     printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
