@@ -347,7 +347,7 @@ void registro_superior(){
 
     fclose(archivo);
     
-    if (conteo_superiores<9)
+    if (conteo_superiores<=9)
     {
         archivo=fopen("superiores.txt","r");
 
