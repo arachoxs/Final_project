@@ -75,6 +75,10 @@ void eleccion_rector(); //menu para los superiores
 
 void rector_electo(); //donde se filtra el gandor
 
+void menu_histogramas(); //menu de los histogramas
+
+void histrograma(int numeral_candidato); //histogramas
+
 //main------------
 
 int main(){
@@ -99,7 +103,7 @@ do
         {
             system("cls");
             printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.Resetear votos y verifiaciones\n8.Resetear archivos\n0.salir\n\n");
+            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.mostrar listado registro_voto\n8.Resetear votos y verifiaciones\n9.Resetear archivos\n0.salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
@@ -133,9 +137,13 @@ do
                 break;
             case 7:
                 system("cls");
-                resetear();
+                mostrar_registro_votos();
                 break;
             case 8:
+                system("cls");
+                resetear();
+                break;
+            case 9:
                 system("cls");
                 limpiar_archivos();
                 break;
@@ -158,8 +166,10 @@ do
             system("pause");
         }
         break;
-    //falta el case 3 de los histogramas
-
+    case 3:
+        system("cls");
+        menu_histogramas();
+        break; 
     case 4:
         system("cls");
         eleccion_rector();
@@ -439,6 +449,9 @@ void menu_votacion(){
         case 4:
             votacion("Egresado");
             break;
+        case 0:
+            return 0;
+            break;
         default:
             break;
         }
@@ -630,6 +643,23 @@ void mostrar_superiores(){
     }
     
     fclose(archivo_superior);
+
+    system("pause");
+}
+
+//funciion para mostrar el archivo de registro de votos
+
+void mostrar_registro_votos(){
+    FILE *archivo_registro;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        printf("%i %s\n",registro_voto.numero_candidato_votado,registro_voto.tipo_usuario);
+    }
+    
+    fclose(archivo_registro);
 
     system("pause");
 }
@@ -1123,4 +1153,88 @@ void rector_electo(){
     
     }
     
+}
+
+void menu_histogramas(){
+    FILE *archivo_candidatos;
+
+    int seleccion_candidato;
+
+    archivo_candidatos=fopen("candidatos.txt","r");
+
+    do
+    {
+        printf("\n\tCandidatos con su numeral: \n\n");
+
+        while((fread(&candidato,sizeof(candidato),1,archivo_candidatos))==1){
+            printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
+            }
+
+        printf("\n\nSeleccione el candidato para el histograma: "); scanf("%i",&seleccion_candidato);
+        
+    } while (seleccion_candidato<1||seleccion_candidato>6);
+    
+
+    fclose(archivo_candidatos);
+
+    system("cls");
+
+    histrograma(seleccion_candidato);
+    
+}
+
+void asteriscos(int numero_votos){
+    
+    for (int i = 0; i < numero_votos; i++)
+    {
+        printf("*");
+    }
+
+    printf("\n\n");
+    
+}
+
+void histrograma(int numeral_candidato){
+    int lista_votos_usuario[4]={0,0,0,0}; //Docente,Estudiante,Administrativo,Egresado
+
+    FILE *archivo_registro;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+    
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+
+        if (registro_voto.numero_candidato_votado==numeral_candidato)
+        {
+            if (strcmp(registro_voto.tipo_usuario,"Docente")==0)
+            {
+                lista_votos_usuario[0]+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Estudiante")==0)
+            {
+                lista_votos_usuario[1]+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Administrativo")==0)
+            {
+                lista_votos_usuario[2]+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Egresado")==0)
+            {
+                lista_votos_usuario[3]+=1;
+            }
+        }
+    }
+
+    fclose(archivo_registro);
+
+    printf("\n\tHistrograma de votos por tipo de usuario\n\n\n");
+    
+    printf("Docente:\t\t"); asteriscos(lista_votos_usuario[0]); 
+    printf("Estudiante:\t\t"); asteriscos(lista_votos_usuario[1]); 
+    printf("Administrativo:\t"); asteriscos(lista_votos_usuario[2]); 
+    printf("Egresado:\t\t"); asteriscos(lista_votos_usuario[3]); 
+    printf("\n\n");
+
+    system("pause");
+
 }
