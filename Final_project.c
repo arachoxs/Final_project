@@ -1190,12 +1190,13 @@ void asteriscos(int numero_votos){
         printf("*");
     }
 
-    printf("\n\n");
     
 }
 
 void histrograma(int numeral_candidato){
     int lista_votos_usuario[4]={0,0,0,0}; //Docente,Estudiante,Administrativo,Egresado
+
+    float total_votos=0;
 
     FILE *archivo_registro;
 
@@ -1223,16 +1224,18 @@ void histrograma(int numeral_candidato){
                 lista_votos_usuario[3]+=1;
             }
         }
+
+        total_votos+=1;
     }
 
     fclose(archivo_registro);
 
     printf("\n\tHistrograma de votos por tipo de usuario\n\n\n");
     
-    printf("Docente:\t\t"); asteriscos(lista_votos_usuario[0]); 
-    printf("Estudiante:\t\t"); asteriscos(lista_votos_usuario[1]); 
-    printf("Administrativo:\t"); asteriscos(lista_votos_usuario[2]); 
-    printf("Egresado:\t\t"); asteriscos(lista_votos_usuario[3]); 
+    printf("Docente:\t\t"); asteriscos(lista_votos_usuario[0]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[0]/total_votos)*100);
+    printf("Estudiante:\t\t"); asteriscos(lista_votos_usuario[1]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[1]/total_votos)*100);
+    printf("Administrativo:\t\t"); asteriscos(lista_votos_usuario[2]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[2]/total_votos)*100);
+    printf("Egresado:\t\t"); asteriscos(lista_votos_usuario[3]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[3]/total_votos)*100);
     printf("\n\n");
 
     system("pause");
