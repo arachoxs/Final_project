@@ -79,6 +79,20 @@ void menu_histogramas(); //menu de los histogramas
 
 void histrograma(int numeral_candidato); //histogramas
 
+int total_tipo_usuario(char tipo_usuario[20]);
+
+float tipo_usuario_formula(char tipo_usuario[20],int numeral_candidato);
+
+int total_votos_candidato(int numeral_candidato);
+
+float formula(int numeral_candidato);
+
+void tabla();
+
+void candidatos_tabla(int numeral_candidato);
+
+void tabla();
+
 //main------------
 
 int main(){
@@ -90,7 +104,7 @@ do
     system("cls");
     printf("\n-----menu Principal-----\n\n");
 
-    printf("1.Administrador\n2.consulta\n3.Histogramas\n4.Voto superiores\n5.Resultado Ganador\n0.salir\n\n");
+    printf("1.Administrador\n2.consulta\n3.Histogramas\n4.Voto superiores\n5.tabla\n6.Resultado Ganador\n0.salir\n\n");
     printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
 
     switch (opcion_menu_1)
@@ -175,6 +189,10 @@ do
         eleccion_rector();
     break;
     case 5:
+        system("cls");
+        tabla();
+    break;
+    case 6:
         system("cls");
         rector_electo();
     break;
@@ -829,6 +847,7 @@ void limpiar_archivos(){
     } while (opcion<0||opcion>3);
 }
 
+
 void eleccion_rector(){
 
     int cedula_superior; //se usa luego para modificar la bandera voto en el superior
@@ -903,6 +922,16 @@ void eleccion_rector(){
         if (superior.verificacion_voto==true)
         {
             struct candidatos lista_candidatos[numero_candidatos];
+            float lista_formulas[numero_candidatos]; //llenar con las formulas de cada candidato
+            int numero_candidato=1;
+
+            for (int i = 0; i < numero_candidatos; i++)
+            {
+                lista_formulas[i]=formula(numero_candidato);
+                numero_candidato++;
+            }
+            
+            
             float numero_total_votos=0;
             int posicion_lista=0;
             FILE *archivo_candidato;
@@ -920,11 +949,15 @@ void eleccion_rector(){
             {
                 for (int a = 1; a < numero_candidatos; a++)
                 {
-                    if (lista_candidatos[a-1].numero_votos_usuarios<lista_candidatos[a].numero_votos_usuarios)
+                    if (lista_formulas[a-1]<lista_formulas[a])
                     {
                         struct candidatos temporal=lista_candidatos[a-1];
                         lista_candidatos[a-1]=lista_candidatos[a];
                         lista_candidatos[a]=temporal;
+
+                        float formula_candidato=lista_formulas[a-1];
+                        lista_formulas[a-1]=lista_formulas[a];
+                        lista_formulas[a]=formula_candidato;
                     }
                     
                 }
@@ -940,8 +973,8 @@ void eleccion_rector(){
                 for (int i = 0; i < 3; i++)
                 {
                     
-                    double porcentaje=lista_candidatos[i].numero_votos_usuarios/numero_total_votos;
-                    printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,porcentaje*100);
+            
+                    printf("%i\t%s\t\t%i\t\t\t%.2f%%",lista_candidatos[i].numero_candidato,lista_candidatos[i].nombre,lista_candidatos[i].numero_votos_usuarios,lista_formulas[i]);
                     printf("\n\n");
                 }
                 printf("\n\nSenor Superior seleccione el candidato ganador: "); scanf("%i",&seleccion_voto);
@@ -1223,21 +1256,186 @@ void histrograma(int numeral_candidato){
             {
                 lista_votos_usuario[3]+=1;
             }
+
+            total_votos+=1;
         }
 
-        total_votos+=1;
     }
 
     fclose(archivo_registro);
 
     printf("\n\tHistrograma de votos por tipo de usuario\n\n\n");
     
-    printf("Docente:\t\t"); asteriscos(lista_votos_usuario[0]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[0]/total_votos)*100);
-    printf("Estudiante:\t\t"); asteriscos(lista_votos_usuario[1]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[1]/total_votos)*100);
-    printf("Administrativo:\t\t"); asteriscos(lista_votos_usuario[2]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[2]/total_votos)*100);
-    printf("Egresado:\t\t"); asteriscos(lista_votos_usuario[3]); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[3]/total_votos)*100);
+    printf("Docente:\t\t"); asteriscos((lista_votos_usuario[0]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[0]/total_votos)*100);
+    printf("Estudiante:\t\t"); asteriscos((lista_votos_usuario[1]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[1]/total_votos)*100);
+    printf("Administrativo:\t\t"); asteriscos((lista_votos_usuario[2]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[2]/total_votos)*100);
+    printf("Egresado:\t\t"); asteriscos((lista_votos_usuario[3]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[3]/total_votos)*100);
     printf("\n\n");
 
     system("pause");
 
+}
+
+int total_tipo_usuario(char tipo_usuario[20]){
+    FILE *archivo_registro;
+
+    int total_votos=0;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        if (strcmp(registro_voto.tipo_usuario,tipo_usuario)==0)
+        {
+            total_votos+=1;
+        }
+    }
+
+    fclose(archivo_registro);
+
+    return total_votos;
+}
+
+float tipo_usuario_formula(char tipo_usuario[20],int numeral_candidato){
+    FILE *archivo_registro;
+
+    float total_votos=0;
+
+    float total_tipo_candidato=0;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        if (strcmp(registro_voto.tipo_usuario,tipo_usuario)==0)
+        {
+            total_votos+=1;
+            if (registro_voto.numero_candidato_votado==numeral_candidato)
+            {
+                total_tipo_candidato+=1;
+            }
+            
+        }
+
+
+    }
+
+    fclose(archivo_registro);
+
+    return (total_tipo_candidato/total_votos);
+}
+
+int total_votos_candidato(int numeral_candidato){
+    FILE *archivo_registro;
+
+    int total_votos=0;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        if (registro_voto.numero_candidato_votado==numeral_candidato)
+        {
+            total_votos+=1;
+        }
+    }
+
+    fclose(archivo_registro);
+
+    return total_votos;
+
+}
+
+float formula(int numeral_candidato){
+    float resultado_formula=0;
+    resultado_formula=(tipo_usuario_formula("Docente",numeral_candidato)*40)+(tipo_usuario_formula("Estudiante",numeral_candidato)*35)+(tipo_usuario_formula("Administrativo",numeral_candidato)*15)+(tipo_usuario_formula("Egresado",numeral_candidato)*10);
+    return resultado_formula;
+}
+
+void candidatos_tabla(int numeral_candidato){
+    FILE *archivo_candidatos;
+    FILE *archivo_registro;
+
+    int numero_votos_docente=0;
+    int numero_votos_estudiante=0;
+    int numero_votos_administrativo=0;
+    int numero_votos_egresado=0;
+
+    float porcentaje=0;
+
+
+    char nombre_candidato[50];
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        if (registro_voto.numero_candidato_votado==numeral_candidato)
+        {
+            if (strcmp(registro_voto.tipo_usuario,"Docente")==0)
+            {
+                numero_votos_docente+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Estudiante")==0)
+            {
+                numero_votos_estudiante+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Administrativo")==0)
+            {
+                numero_votos_administrativo+=1;
+            }
+            else if (strcmp(registro_voto.tipo_usuario,"Egresado")==0)
+            {
+                numero_votos_egresado+=1;
+            }
+        }
+    }
+
+    porcentaje=(numero_votos_docente*0.4)+(numero_votos_estudiante*0.35)+(numero_votos_egresado*0.15)+(numero_votos_administrativo*0.1);
+
+    fclose(archivo_registro);    
+
+    archivo_candidatos=fopen("candidatos.txt","r");
+
+    while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
+    {
+        if (candidato.numero_candidato==numeral_candidato)
+        {
+            strcpy(nombre_candidato,candidato.nombre);
+        }
+    }
+
+    fclose(archivo_candidatos);
+    printf("________________________________________________________________________________________________________________________________________________________________________________\n");
+    if (numeral_candidato==3)
+    {
+        printf("|%s\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t%.2f %%\t\t|\n",nombre_candidato,numero_votos_docente,numero_votos_estudiante,numero_votos_administrativo,numero_votos_egresado,numero_votos_docente+numero_votos_estudiante+numero_votos_administrativo+numero_votos_egresado,formula(numeral_candidato));
+    }
+    else
+    {
+        printf("|%s\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t%.2f %%\t\t|\n",nombre_candidato,numero_votos_docente,numero_votos_estudiante,numero_votos_administrativo,numero_votos_egresado,numero_votos_docente+numero_votos_estudiante+numero_votos_administrativo+numero_votos_egresado,formula(numeral_candidato));
+    }
+    
+    
+}
+
+void tabla(){
+
+    printf("|\tcandidato\t\t|\tdocente 40%%\t|\testudiante 35%%\t|\tadministrativo 10%%\t|\tegresado 15%%\t|\ttotales\t|\tresultados\t|\n");
+    candidatos_tabla(1);
+    candidatos_tabla(2);
+    candidatos_tabla(3);
+    candidatos_tabla(4);
+    candidatos_tabla(5);
+    candidatos_tabla(6);
+    printf("________________________________________________________________________________________________________________________________________________________________________________\n");
+    printf("|\tTotales\t\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t100 %%\t\t|",total_tipo_usuario("Docente"),total_tipo_usuario("Estudiante"),total_tipo_usuario("Administrativo"),total_tipo_usuario("Egresado"),total_votos_candidato(1)+total_votos_candidato(2)+total_votos_candidato(3)+total_votos_candidato(4)+total_votos_candidato(5)+total_votos_candidato(6));
+
+
+
+
+
+
+
+    system("pause");
 }
