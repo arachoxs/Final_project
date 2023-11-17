@@ -490,6 +490,8 @@ void votacion(char tipo_usuario[20]){
 
     int seleccion_voto;
 
+    int confirmacion_voto;
+
     archivo_usuario=fopen("usuario.txt","r");
 
     int numero_cedula;
@@ -530,9 +532,20 @@ void votacion(char tipo_usuario[20]){
                     {
                         if (candidato.numero_candidato==seleccion_voto)
                         {   
-                            verificacion_voto_correcto='t';
-                            fclose(archivo_candidato);
-                            break;
+                            do
+                            {
+                                system("cls");
+                                printf("Esta seguro?\n1.si\n2.no");
+                                printf("\n\nDigite su opcion: "); scanf("%i",&confirmacion_voto);
+                            } while (confirmacion_voto<1||confirmacion_voto>2);
+                            
+                            if (confirmacion_voto==1)
+                            {
+                                verificacion_voto_correcto='t';
+                                fclose(archivo_candidato);
+                                break;
+                            }
+                            
                         }
                     }
                     
@@ -846,7 +859,6 @@ void limpiar_archivos(){
         
     } while (opcion<0||opcion>3);
 }
-
 
 void eleccion_rector(){
 
