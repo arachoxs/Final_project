@@ -490,8 +490,6 @@ void votacion(char tipo_usuario[20]){
 
     int seleccion_voto;
 
-    int confirmacion_voto;
-
     archivo_usuario=fopen("usuario.txt","r");
 
     int numero_cedula;
@@ -513,6 +511,8 @@ void votacion(char tipo_usuario[20]){
                 {
                     system("cls");
 
+                    int confirmacion_voto;
+
                     archivo_candidato=fopen("candidatos.txt","r");
 
                     printf("\n\tCandidatos con su numeral: \n\n");
@@ -532,24 +532,24 @@ void votacion(char tipo_usuario[20]){
                     {
                         if (candidato.numero_candidato==seleccion_voto)
                         {   
-                            do
-                            {
-                                system("cls");
-                                printf("Esta seguro?\n1.si\n2.no");
-                                printf("\n\nDigite su opcion: "); scanf("%i",&confirmacion_voto);
-                            } while (confirmacion_voto<1||confirmacion_voto>2);
-                            
-                            if (confirmacion_voto==1)
-                            {
-                                verificacion_voto_correcto='t';
-                                fclose(archivo_candidato);
-                                break;
-                            }
+                            verificacion_voto_correcto='t';
+                            break;
                             
                         }
                     }
+
+                    fclose(archivo_candidato);
+
+                    system("cls");
+                    printf("Esta seguro de su seleccion?\n1.si\n2.no\n\nDigite su opcion: "); scanf("%i",&confirmacion_voto);
+
+                    if (confirmacion_voto==2)
+                    {
+                        verificacion_voto_correcto='f';
+                    }
                     
                 } while (verificacion_voto_correcto=='f');
+
 
                 temporal_candidato=fopen("candidatos_temporal.txt","w");
                 archivo_candidato=fopen("candidatos.txt","r");
@@ -1360,7 +1360,7 @@ int total_votos_candidato(int numeral_candidato){
 
 float formula(int numeral_candidato){
     float resultado_formula=0;
-    resultado_formula=(tipo_usuario_formula("Docente",numeral_candidato)*40)+(tipo_usuario_formula("Estudiante",numeral_candidato)*35)+(tipo_usuario_formula("Administrativo",numeral_candidato)*15)+(tipo_usuario_formula("Egresado",numeral_candidato)*10);
+    resultado_formula=((tipo_usuario_formula("Docente",numeral_candidato))*40)+((tipo_usuario_formula("Estudiante",numeral_candidato))*35)+((tipo_usuario_formula("Administrativo",numeral_candidato))*10)+((tipo_usuario_formula("Egresado",numeral_candidato))*15);
     return resultado_formula;
 }
 
@@ -1402,8 +1402,6 @@ void candidatos_tabla(int numeral_candidato){
             }
         }
     }
-
-    porcentaje=(numero_votos_docente*0.4)+(numero_votos_estudiante*0.35)+(numero_votos_egresado*0.15)+(numero_votos_administrativo*0.1);
 
     fclose(archivo_registro);    
 
