@@ -540,9 +540,12 @@ void votacion(char tipo_usuario[20]){
 
                     fclose(archivo_candidato);
 
-                    system("cls");
-                    printf("Esta seguro de su seleccion?\n1.si\n2.no\n\nDigite su opcion: "); scanf("%i",&confirmacion_voto);
-
+                    do
+                    {
+                        system("cls");
+                        printf("Esta seguro de su seleccion?\n1.si\n2.no\n\nDigite su opcion: "); scanf("%i",&confirmacion_voto);
+                    } while (confirmacion_voto>2||confirmacion_voto<1);
+                    
                     if (confirmacion_voto==2)
                     {
                         verificacion_voto_correcto='f';
@@ -593,40 +596,44 @@ void votacion(char tipo_usuario[20]){
     }
     else
     {
-        archivo_usuario=fopen("usuario.txt","r");
-        temporal_usuario=fopen("usuario_temporal.txt","w");
-
-        while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
+        if (verificacion_voto_correcto=='t')
         {
-            if (usuario.cedula==numero_cedula)
+            archivo_usuario=fopen("usuario.txt","r");
+            temporal_usuario=fopen("usuario_temporal.txt","w");
+
+            while (fread(&usuario,sizeof(usuario),1,archivo_usuario)==1)
             {
-                usuario.verificacion_voto=false;
-                fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+                if (usuario.cedula==numero_cedula)
+                {
+                    usuario.verificacion_voto=false;
+                    fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+                }
+                else
+                {
+                    fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
+                }
             }
-            else
-            {
-                fwrite(&usuario,sizeof(usuario),1,temporal_usuario);
-            }
+
+
+            fclose(archivo_usuario);
+            fclose(temporal_usuario);
+
+            remove("usuario.txt");
+            rename("usuario_temporal.txt","usuario.txt");
+
+            FILE *archivo_registro;
+
+            archivo_registro=fopen("registro_voto.txt","a");
+
+            registro_voto.numero_candidato_votado=seleccion_voto;
+            
+            strcpy(registro_voto.tipo_usuario,tipo_usuario);
+
+            fwrite(&registro_voto,sizeof(registro_voto),1,archivo_registro);
+
+            fclose(archivo_registro);
         }
-
-
-        fclose(archivo_usuario);
-        fclose(temporal_usuario);
-
-        remove("usuario.txt");
-        rename("usuario_temporal.txt","usuario.txt");
-
-        FILE *archivo_registro;
-
-        archivo_registro=fopen("registro_voto.txt","a");
-
-        registro_voto.numero_candidato_votado=seleccion_voto;
         
-        strcpy (registro_voto.tipo_usuario,tipo_usuario);
-
-        fwrite(&registro_voto,sizeof(registro_voto),1,archivo_registro);
-
-        fclose(archivo_registro);
     }
     
         
@@ -1440,12 +1447,6 @@ void tabla(){
     candidatos_tabla(6);
     printf("________________________________________________________________________________________________________________________________________________________________________________\n");
     printf("|\tTotales\t\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t100 %%\t\t|",total_tipo_usuario("Docente"),total_tipo_usuario("Estudiante"),total_tipo_usuario("Administrativo"),total_tipo_usuario("Egresado"),total_votos_candidato(1)+total_votos_candidato(2)+total_votos_candidato(3)+total_votos_candidato(4)+total_votos_candidato(5)+total_votos_candidato(6));
-
-
-
-
-
-
-
+    printf("\n________________________________________________________________________________________________________________________________________________________________________________\n\n");
     system("pause");
 }
