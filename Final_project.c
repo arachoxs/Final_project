@@ -79,6 +79,10 @@ void menu_histogramas(); //menu de los histogramas
 
 void histrograma(int numeral_candidato); //histogramas
 
+void menu_histograma_usuarios();
+
+void histograma_tipo_usuario(char tipo_usuario[20]);
+
 int total_tipo_usuario(char tipo_usuario[20]);
 
 float tipo_usuario_formula(char tipo_usuario[20],int numeral_candidato);
@@ -102,10 +106,11 @@ int opcion_menu_1;
 do 
 {
     system("cls");
-    printf("\n-----menu Principal-----\n\n");
+    printf("\n\tMENU PRINCIPAL\t\n\n");
+    //histograma tabla
 
-    printf("1.Administrador\n2.consulta\n3.Histogramas\n4.Voto superiores\n5.tabla\n6.Resultado Ganador\n0.salir\n\n");
-    printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
+    printf("1.Inicio sesion administrador\n2.Votacion usuarios\n3.Votaciones superiores\n4.Datos votaciones\n5.Resultado Ganador\n0.Salir\n\n");
+    printf("Seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
 
     switch (opcion_menu_1)
     {
@@ -116,9 +121,9 @@ do
         while (login_succesful=='t')
         {
             system("cls");
-            printf("\n-----menu admin-----\n\n");
-            printf("1.registrar candidato\n2.registrar usuario\n3.registrar superior\n4.mostrar listado candidatos\n5.mostrar listado usuarios\n6.mostrar listado superiores\n7.mostrar listado registro_voto\n8.Resetear votos y verifiaciones\n9.Resetear archivos\n0.salir\n\n");
-            printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
+            printf("\n\tMENU ADMIN\t\n\n");
+            printf("1.Menu registros\n2.Control base de datos\n0.Salir\n\n");
+            printf("Seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
 
             switch (menu_admin)
             {
@@ -126,43 +131,75 @@ do
                 login_succesful='f';
                 break;
             case 1:
-                system("cls");
-                registro_candidato();
+                do
+                {
+                    system("cls");
+                    printf("\n\tMENU REGISTRO\n\n");
+                    printf("1.Registrar candidato\n2.Registrar usuario\n3.Registrar superior\n0.Salir\n\n");
+                    printf("Seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
+                    switch (menu_admin)
+                    {
+                    case 1:
+                        system("cls");
+                        registro_candidato();
+                    break;
+                    case 2:
+                        system("cls");
+                        registro_usuario();
+                    break;
+                    case 3:
+                        system("cls");
+                        registro_superior();
+                    break;
+                    default:
+                        break;
+                    }
+                } while (menu_admin!=0);
+
+                menu_admin=1;
                 break;
             case 2:
                 system("cls");
-                registro_usuario();
-                break;
-            case 3:
-                system("cls");
-                registro_superior();
-                break;
-            case 4:
-                system("cls");
-                mostrar_candidatos();
-                break;
-            case 5:
-                system("cls");
-                mostrar_usuarios();
-                break;
-            case 6:
-                system("cls");
-                mostrar_superiores();
-                break;
-            case 7:
-                system("cls");
-                mostrar_registro_votos();
-                break;
-            case 8:
-                system("cls");
-                resetear();
-                break;
-            case 9:
-                system("cls");
-                limpiar_archivos();
-                break;
+                do
+                {
+                    system("cls");
+                    printf("\n\tMENU BASE DE DATOS\n\n");
+                    printf("1.Mostrar candidatos\n2.Mostrar usuarios\n3.Mostrar superiores\n4.Mostrar registro votos\n5.Restear datos\n6.Resetear bases\n0.salir\n\n");
+                    printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
+                    switch (menu_admin)
+                    {
+                        case 1:
+                            system("cls");
+                            mostrar_candidatos();
+                        break;
+                        case 2:
+                            system("cls");
+                            mostrar_usuarios();
+                        break;
+                        case 3:
+                            system("cls");
+                            mostrar_superiores();
+                        break;
+                        case 4:
+                            system("cls");
+                            mostrar_registro_votos();
+                        break;
+                        case 5:
+                            system("cls");
+                            limpiar_archivos();
+                        break;
+                        case 6:
+                            system("cls");
+                            resetear();
+                        break;
+                    }
+
+                } while (menu_admin!=0);
+                
+                menu_admin==2;
+            break;
             default:
-                break;
+            break;
             }
         }
         
@@ -182,17 +219,38 @@ do
         break;
     case 3:
         system("cls");
-        menu_histogramas();
-        break; 
-    case 4:
-        system("cls");
         eleccion_rector();
     break;
-    case 5:
-        system("cls");
-        tabla();
+    case 4:
+        do
+        {
+            system("cls");
+            printf("\n\tDatos de votaciones\n\n");
+            printf("1.Histogramas por candidato\n2.Histograma por tipo de usuario\n3.Tabla\n0.Salir\n\n");
+            printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
+            switch (opcion_menu_1)
+            {  
+            case 1:
+                system("cls");
+                menu_histogramas();
+            break;
+            case 2:
+                system("cls");
+                menu_histograma_usuarios();
+            break;
+            case 3:
+                system("cls");
+                tabla();
+            break;
+            default:
+                break;
+            }
+        } while (opcion_menu_1!=0);
+
+        opcion_menu_1=4;
+        
     break;
-    case 6:
+    case 5:
         system("cls");
         rector_electo();
     break;
@@ -203,8 +261,6 @@ do
 
     return 0;
 }
-
-
 
 char login_admin(){
     char band='f';
@@ -218,7 +274,7 @@ char login_admin(){
     do
     {
         system("cls");
-        printf("\n\tinicio de sesion\n\n");
+        printf("\n\tInicio de sesion\n\n");
         printf("Digite el usuario: "); scanf("%s",&try_admin);
         printf("Digite la contraseña: "); scanf("%s",&try_password);
 
@@ -440,7 +496,6 @@ bool verificacion_votacion_abierta(){
     return admin.votaciones_abiertas;
 
 }
-
 
 void menu_votacion(){
     int seleccion_urna;
@@ -684,8 +739,6 @@ void mostrar_superiores(){
 
     system("pause");
 }
-
-//funciion para mostrar el archivo de registro de votos
 
 void mostrar_registro_votos(){
     FILE *archivo_registro;
@@ -1208,38 +1261,57 @@ void rector_electo(){
 }
 
 void menu_histogramas(){
-    FILE *archivo_candidatos;
-
-    int seleccion_candidato;
-
-    archivo_candidatos=fopen("candidatos.txt","r");
+   
+    char salir;
 
     do
     {
-        printf("\n\tCandidatos con su numeral: \n\n");
+        system("cls");
+        salir='f';
 
-        while((fread(&candidato,sizeof(candidato),1,archivo_candidatos))==1){
-            printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
+        FILE *archivo_candidatos;
+
+        int seleccion_candidato;
+
+
+        do
+        {
+            system("cls");
+            archivo_candidatos=fopen("candidatos.txt","r");
+
+            printf("\n\tCandidatos con su numeral: \n\n");
+
+            while((fread(&candidato,sizeof(candidato),1,archivo_candidatos))==1){
+                printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
+                }
+
+            printf("\n0.salir");
+
+            printf("\n\nSeleccione el candidato para el histograma: "); scanf("%i",&seleccion_candidato);
+
+            if (seleccion_candidato==0)
+            {
+                salir='t';
             }
 
-        printf("\n\nSeleccione el candidato para el histograma: "); scanf("%i",&seleccion_candidato);
+            fclose(archivo_candidatos);
+            
+        } while (seleccion_candidato<0||seleccion_candidato>7);
         
-    } while (seleccion_candidato<1||seleccion_candidato>6);
-    
-
-    fclose(archivo_candidatos);
-
-    system("cls");
-
-    histrograma(seleccion_candidato);
-    
+        if (salir=='f')
+        {
+            system("cls");
+            histrograma(seleccion_candidato);
+        }
+        
+    } while (salir=='f');
 }
 
 void asteriscos(int numero_votos){
     
     for (int i = 0; i < numero_votos; i++)
     {
-        printf("*");
+        printf("%c",219);
     }
 
     
@@ -1283,12 +1355,132 @@ void histrograma(int numeral_candidato){
 
     fclose(archivo_registro);
 
-    printf("\n\tHistrograma de votos por tipo de usuario\n\n\n");
+    FILE *archivo_candidatos;
+
+    archivo_candidatos=fopen("candidatos.txt","r");
+
+    while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
+    {
+        if (candidato.numero_candidato==numeral_candidato)
+        {
+            printf("\n\tHistograma de votos para el candidato %s\n\n\n",candidato.nombre);
+            break;
+        }
+    }
+    fclose(archivo_candidatos);
+
+    printf("Tipo usuario\t\tPorcentaje\tHistograma\n\n");
     
-    printf("Docente:\t\t"); asteriscos((lista_votos_usuario[0]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[0]/total_votos)*100);
-    printf("Estudiante:\t\t"); asteriscos((lista_votos_usuario[1]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[1]/total_votos)*100);
-    printf("Administrativo:\t\t"); asteriscos((lista_votos_usuario[2]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[2]/total_votos)*100);
-    printf("Egresado:\t\t"); asteriscos((lista_votos_usuario[3]/total_votos)*50); printf("\tporcentaje: %.2f %%\n\n",(lista_votos_usuario[3]/total_votos)*100);
+    printf("Docente:\t\t"); printf("%.1f %%\t\t",(lista_votos_usuario[0]/total_votos)*100); asteriscos((lista_votos_usuario[0]/total_votos)*50); printf("\n\n");
+    printf("Estudiante:\t\t"); printf("%.1f %%\t\t",(lista_votos_usuario[1]/total_votos)*100); asteriscos((lista_votos_usuario[1]/total_votos)*50); printf("\n\n");
+    printf("Administrativo:\t\t"); printf("%.1f %%\t\t",(lista_votos_usuario[2]/total_votos)*100); asteriscos((lista_votos_usuario[2]/total_votos)*50); printf("\n\n");
+    printf("Egresado:\t\t"); printf("%.1f %%\t\t",(lista_votos_usuario[3]/total_votos)*100); asteriscos((lista_votos_usuario[3]/total_votos)*50);  printf("\n\n");
+    printf("\n\n");
+
+    system("pause");
+
+}
+
+void menu_histograma_usuarios(){
+    int seleccion_usuario;
+
+    do
+    {
+        system("cls");
+        printf("\tHISTOGRAMA USUARIOS\t\n\n");
+        printf("1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n\n0.Salir\n\nSeleccione el tipo de usuario: "); scanf("%i",&seleccion_usuario);
+
+        switch (seleccion_usuario)
+        {
+        case 1:
+            system("cls");
+            histograma_tipo_usuario("Docente");
+            break;
+        case 2:
+            system("cls");
+            histograma_tipo_usuario("Estudiante");
+            break;
+        case 3:
+            system("cls");
+            histograma_tipo_usuario("Administrativo");
+            break;
+        case 4:
+            system("cls");
+            histograma_tipo_usuario("Egresado");
+            break; 
+        case 0:
+            break; 
+        default:
+            break;
+        }
+
+    } while (seleccion_usuario!=0);
+    
+
+}
+
+void histograma_tipo_usuario(char tipo_usuario[20]){
+    //funcion que muestra un histograma por el tipo de usuario dado
+
+    int lista_votos_candidatos[7]={0,0,0,0,0,0,0}; //candidatos 1,2,3,4,5,6,7
+
+    float total_votos=0;
+
+    FILE *archivo_registro;
+
+    archivo_registro=fopen("registro_voto.txt","r");
+
+    while (fread(&registro_voto,sizeof(registro_voto),1,archivo_registro)==1)
+    {
+        if (strcmp(registro_voto.tipo_usuario,tipo_usuario)==0)
+        {
+            if (registro_voto.numero_candidato_votado==1)
+            {
+                lista_votos_candidatos[0]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==2)
+            {
+                lista_votos_candidatos[1]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==3)
+            {
+                lista_votos_candidatos[2]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==4)
+            {
+                lista_votos_candidatos[3]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==5)
+            {
+                lista_votos_candidatos[4]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==6)
+            {
+                lista_votos_candidatos[5]+=1;
+            }
+            else if (registro_voto.numero_candidato_votado==7)
+            {
+                lista_votos_candidatos[6]+=1;
+            }
+
+            total_votos+=1;
+        }
+    }
+
+    fclose(archivo_registro);
+
+    printf("\n\tHistrograma de votos por candidato\n\n\n");
+
+    printf("\tNombre Candidato\t\tPorcentaje\tNumero votos\tHistograma\n\n");
+
+    printf("Luis Fernando Gaviria Trujillo:\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[0]/total_votos)*100,lista_votos_candidatos[0]); asteriscos((lista_votos_candidatos[0]/total_votos)*50); printf("\n\n");
+    printf("Carlos Alfonso Victoria Mena:\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[1]/total_votos)*100,lista_votos_candidatos[1]); asteriscos((lista_votos_candidatos[1]/total_votos)*50); printf("\n\n");
+    printf("Giovanni Arias:\t\t\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[2]/total_votos)*100,lista_votos_candidatos[2]); asteriscos((lista_votos_candidatos[2]/total_votos)*50); printf("\n\n");
+    printf("Xiomara Rocio Gonzales Ordoñes:\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[3]/total_votos)*100,lista_votos_candidatos[3]); asteriscos((lista_votos_candidatos[3]/total_votos)*50); printf("\n\n");
+    printf("Alexander Molina Cabrena:\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[4]/total_votos)*100,lista_votos_candidatos[4]); asteriscos((lista_votos_candidatos[4]/total_votos)*50); printf("\n\n");
+    printf("Juan Carlos Guitierrez Arias:\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[5]/total_votos)*100,lista_votos_candidatos[5]); asteriscos((lista_votos_candidatos[5]/total_votos)*50); printf("\n\n");
+    printf("Voto en blanco:\t\t\t\t"); printf("%.1f %%\t\t\t%i\t",(lista_votos_candidatos[6]/total_votos)*100,lista_votos_candidatos[6]); asteriscos((lista_votos_candidatos[6]/total_votos)*50); printf("\n\n");
+
     printf("\n\n");
 
     system("pause");
@@ -1423,10 +1615,18 @@ void candidatos_tabla(int numeral_candidato){
     }
 
     fclose(archivo_candidatos);
-    printf("________________________________________________________________________________________________________________________________________________________________________________\n");
-    if (numeral_candidato==3)
+    printf(" -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+    if (numeral_candidato==3||numeral_candidato==7)
     {
-        printf("|%s\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t%.2f %%\t\t|\n",nombre_candidato,numero_votos_docente,numero_votos_estudiante,numero_votos_administrativo,numero_votos_egresado,numero_votos_docente+numero_votos_estudiante+numero_votos_administrativo+numero_votos_egresado,formula(numeral_candidato));
+        if (numeral_candidato==3)
+        {
+            printf("|%s\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t%.2f %%\t\t|\n",nombre_candidato,numero_votos_docente,numero_votos_estudiante,numero_votos_administrativo,numero_votos_egresado,numero_votos_docente+numero_votos_estudiante+numero_votos_administrativo+numero_votos_egresado,formula(numeral_candidato));   
+        }
+        else if (numeral_candidato==7)
+        {
+            printf("|%s\t\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t%.2f %%\t\t|\n",nombre_candidato,numero_votos_docente,numero_votos_estudiante,numero_votos_administrativo,numero_votos_egresado,numero_votos_docente+numero_votos_estudiante+numero_votos_administrativo+numero_votos_egresado,formula(numeral_candidato));
+        }
+        
     }
     else
     {
@@ -1437,16 +1637,18 @@ void candidatos_tabla(int numeral_candidato){
 }
 
 void tabla(){
-
-    printf("|\tcandidato\t\t|\tdocente 40%%\t|\testudiante 35%%\t|\tadministrativo 10%%\t|\tegresado 15%%\t|\ttotales\t|\tresultados\t|\n");
+    printf(" ______________________________________________________________________________________________________________________________________________________________________________\n");
+    printf("|\t  CANDIDATOS\t\t|\tDOCENTES 40%%\t|\tESTUDIANTES 35%%\t|\tADMINISTRATIVO 10%%\t|\tEGRESADO 15%%\t|\tTOTALES\t|\tRESULTADOS\t|\n");
     candidatos_tabla(1);
     candidatos_tabla(2);
     candidatos_tabla(3);
     candidatos_tabla(4);
     candidatos_tabla(5);
     candidatos_tabla(6);
-    printf("________________________________________________________________________________________________________________________________________________________________________________\n");
-    printf("|\tTotales\t\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t100 %%\t\t|",total_tipo_usuario("Docente"),total_tipo_usuario("Estudiante"),total_tipo_usuario("Administrativo"),total_tipo_usuario("Egresado"),total_votos_candidato(1)+total_votos_candidato(2)+total_votos_candidato(3)+total_votos_candidato(4)+total_votos_candidato(5)+total_votos_candidato(6));
-    printf("\n________________________________________________________________________________________________________________________________________________________________________________\n\n");
+    candidatos_tabla(7);
+    printf(" _______________________________________________________________________________________________________________________________________________________________________________\n");
+    printf("|\tTOTALES\t\t\t|\t%i\t\t|\t%i\t\t|\t\t%i\t\t|\t%i\t\t|\t%i\t|\t100 %%\t\t|",total_tipo_usuario("Docente"),total_tipo_usuario("Estudiante"),total_tipo_usuario("Administrativo"),total_tipo_usuario("Egresado"),total_votos_candidato(1)+total_votos_candidato(2)+total_votos_candidato(3)+total_votos_candidato(4)+total_votos_candidato(5)+total_votos_candidato(6));
+    printf("\n -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
+
     system("pause");
 }
