@@ -1285,7 +1285,7 @@ void menu_histogramas(){
                 printf("%i %s\n",candidato.numero_candidato,candidato.nombre);
                 }
 
-            printf("\n0.salir");
+            printf("0.salir");
 
             printf("\n\nSeleccione el candidato para el histograma: "); scanf("%i",&seleccion_candidato);
 
@@ -1388,7 +1388,7 @@ void menu_histograma_usuarios(){
     {
         system("cls");
         printf("\tHISTOGRAMA USUARIOS\t\n\n");
-        printf("1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n\n0.Salir\n\nSeleccione el tipo de usuario: "); scanf("%i",&seleccion_usuario);
+        printf("1.Docente\n2.Estudiante\n3.Administrativo\n4.Egresado\n0.Salir\n\nSeleccione el tipo de usuario: "); scanf("%i",&seleccion_usuario);
 
         switch (seleccion_usuario)
         {
