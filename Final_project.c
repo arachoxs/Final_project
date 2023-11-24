@@ -226,7 +226,7 @@ do
         {
             system("cls");
             printf("\n\tDatos de votaciones\n\n");
-            printf("1.Histogramas por candidato\n2.Histograma por tipo de usuario\n3.Tabla\n0.Salir\n\n");
+            printf("1.Histogramas por candidato\n2.Histograma por tipo de usuario\n3.Tabla de estadisticas\n0.Salir\n\n");
             printf("seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
             switch (opcion_menu_1)
             {  
@@ -951,7 +951,6 @@ void eleccion_rector(){
 
     bool verificacion_votos_faltantes=false;
 
-
     archivo_superior=fopen("superiores.txt","r");
 
     while (fread(&superior,sizeof(superior),1,archivo_superior)==1){
@@ -1167,7 +1166,7 @@ void rector_electo(){
 
     if (ganador_encontrado==false)
     {
-        if (contador_votos_ejercidos==9)
+        if (contador_votos_ejercidos==10)
         {
             archivo_candidatos=fopen("candidatos.txt","r");
 
@@ -1208,27 +1207,74 @@ void rector_electo(){
             }
             //luego de ordenarlos el mayor queda en la posicion 0
 
-            archivo_candidatos=fopen("candidatos.txt","r");
-            temporal_candidatos=fopen("temporal_candidato.txt","w");
+            if(lista_candidatos[0].numero_votos_superiores>=6){
+                archivo_candidatos=fopen("candidatos.txt","r");
+                temporal_candidatos=fopen("temporal_candidato.txt","w");
 
-            while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
-            {
-                if (lista_candidatos[0].numero_candidato==candidato.numero_candidato)
+                while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
                 {
-                    candidato.ganador=true;
-                    fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
+                    if (lista_candidatos[0].numero_candidato==candidato.numero_candidato)
+                    {
+                        candidato.ganador=true;
+                        fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
+                    }
+                    else
+                    {
+                        fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
+                    }
                 }
-                else
-                {
-                    fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
-                }
+
+                fclose(temporal_candidatos);
+                fclose(archivo_candidatos);
+
+                remove("candidatos.txt");
+                rename("temporal_candidato.txt","candidatos.txt");
             }
+            else
+            {
+                system("cls");
+                printf("\n\tEl candidato con mayor votos no supero los 6 votos\n\n");
 
-            fclose(temporal_candidatos);
-            fclose(archivo_candidatos);
+                archivo_candidatos=fopen("candidatos.txt","r");
+                temporal_candidatos=fopen("temporal_candidato.txt","w");
 
-            remove("candidatos.txt");
-            rename("temporal_candidato.txt","candidatos.txt");
+                while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
+                {
+                    candidato.numero_votos_superiores=0;
+                    fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
+                }
+
+                fclose(temporal_candidatos);
+                fclose(archivo_candidatos);
+                
+                remove("candidatos.txt");
+                rename("temporal_candidato.txt","candidatos.txt");
+
+                //resetea las banderas de los superiores
+
+                FILE *archivo_superiores;
+                FILE *temporal_superiores;
+
+                archivo_superiores=fopen("superiores.txt","r");
+                temporal_superiores=fopen("temporal_superiores.txt","w");
+
+                while (fread(&superior,sizeof(superior),1,archivo_superiores)==1)
+                {
+                    superior.verificacion_voto=true;
+                    fwrite(&superior,sizeof(superior),1,temporal_superiores);
+                }
+
+                fclose(temporal_superiores);
+                fclose(archivo_superiores);
+
+                remove("superiores.txt");
+                rename("temporal_superiores.txt","superiores.txt");
+
+                printf("\n\t\tVotos de superiores reseteados\n\n");
+                system("pause");
+
+            }
+            
         }
         else
         {
@@ -1236,10 +1282,9 @@ void rector_electo(){
             printf("\n\tFaltan superiores por votar\n\n");
             system("pause");
         }
-        
-        
     }
-    else
+    
+    if (ganador_encontrado==true)
     {
         printf("\tCandidato Ganador\n\n");
         archivo_candidatos=fopen("candidatos.txt","r");
