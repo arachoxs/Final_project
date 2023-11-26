@@ -109,7 +109,7 @@ do
     printf("\n\tMENU PRINCIPAL\t\n\n");
     //histograma tabla
 
-    printf("1.Inicio sesion administrador\n2.Votacion usuarios\n3.Votaciones superiores\n4.Datos votaciones\n5.Resultado Ganador\n0.Salir\n\n");
+    printf("1.Inicio sesion del administrador\n2.Votacion de los usuarios\n3.Votacion de los superiores\n4.Datos de las votaciones\n5.Resultado Ganador\n0.Salir\n\n");
     printf("Seleccione la opcion a acceder: "); scanf("%i",&opcion_menu_1);
 
     switch (opcion_menu_1)
