@@ -1514,7 +1514,7 @@ void histograma_tipo_usuario(char tipo_usuario[20]){
 
     fclose(archivo_registro);
 
-    printf("\n\tHistrograma de votos por candidato\n\n\n");
+    printf("\n\tHistrograma de votos por %s\n\n\n",tipo_usuario);
 
     printf("\tNombre Candidato\t\tPorcentaje\tNumero votos\tHistograma\n\n");
 
