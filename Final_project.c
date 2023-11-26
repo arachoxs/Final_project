@@ -164,7 +164,7 @@ do
                 {
                     system("cls");
                     printf("\n\tMENU BASE DE DATOS\n\n");
-                    printf("1.Mostrar candidatos\n2.Mostrar usuarios\n3.Mostrar superiores\n4.Mostrar registro votos\n5.Restear datos\n6.Resetear bases\n0.salir\n\n");
+                    printf("1.Mostrar candidatos\n2.Mostrar usuarios\n3.Mostrar superiores\n4.Mostrar registro votos\n5.Restear datos\n6.Iniciar votaciones desde cero\n0.salir\n\n");
                     printf("seleccione la opcion a acceder: "); scanf("%i",&menu_admin);
                     switch (menu_admin)
                     {
