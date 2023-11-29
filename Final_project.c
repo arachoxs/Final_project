@@ -941,7 +941,7 @@ void resetear_votaciones_superiores(){
         if(candidato.ganador==true){
             candidato.ganador=false;
         }
-        
+
         fwrite(&candidato,sizeof(candidato),1,temporal_candidatos);
     }
     fclose(temporal_candidatos);
@@ -1387,19 +1387,15 @@ void rector_electo(){
     
     if (ganador_encontrado==true)
     {
-        printf("\t\t\t\t\t\t\t\tCANDIDATO GANADOR\n\n");
+        printf("\t\tCANDIDATO GANADOR\n\n\n");
+        printf("Nombre\t\t\t\tVotos Superiores\t\tVotos usuarios\n\n\n");
         archivo_candidatos=fopen("candidatos.txt","r");
 
         while (fread(&candidato,sizeof(candidato),1,archivo_candidatos)==1)
         {
             if (candidato.ganador==true)
             {
-                printf(" ______________________________________________________________________________________________________________________________________________________________________________\n");
-                printf("|\t  CANDIDATO\t\t|\tDOCENTES 40%%\t|\tESTUDIANTES 35%%\t|\tADMINISTRATIVO 10%%\t|\tEGRESADO 15%%\t|\tTOTALES\t|\tRESULTADOS\t|\n");
-                candidatos_tabla(candidato.numero_candidato);
-                printf(" -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------\n\n");
-
-                
+                printf("%s\t\t%i\t\t\t\t%i\n\n\n",candidato.nombre,candidato.numero_votos_superiores,candidato.numero_votos_usuarios);                
                 system("pause");
 
             }
@@ -1521,10 +1517,10 @@ void histrograma(int numeral_candidato){
 
     printf("Tipo usuario\t\tPorcentaje\tNumero votos\tHistograma\n\n");
     
-    printf("Docente:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Docente",numeral_candidato)*10,lista_votos_usuario[0]); asteriscos((lista_votos_usuario[0]/total_votos)*50); printf("\n\n");
-    printf("Estudiante:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Estudiante",numeral_candidato)*10,lista_votos_usuario[1]); asteriscos((lista_votos_usuario[1]/total_votos)*50); printf("\n\n");
-    printf("Administrativo:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Administrativo",numeral_candidato)*10,lista_votos_usuario[2]); asteriscos((lista_votos_usuario[2]/total_votos)*50); printf("\n\n");
-    printf("Egresado:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Egresado",numeral_candidato)*10,lista_votos_usuario[3]); asteriscos((lista_votos_usuario[3]/total_votos)*50);  printf("\n\n");
+    printf("Docente:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Docente",numeral_candidato)*40,lista_votos_usuario[0]); asteriscos((tipo_usuario_formula("Docente",numeral_candidato)*40)); printf("\n\n");
+    printf("Estudiante:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Estudiante",numeral_candidato)*35,lista_votos_usuario[1]); asteriscos((tipo_usuario_formula("Estudiante",numeral_candidato)*35)); printf("\n\n");
+    printf("Administrativo:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Administrativo",numeral_candidato)*10,lista_votos_usuario[2]); asteriscos(tipo_usuario_formula("Administrativo",numeral_candidato)*10); printf("\n\n");
+    printf("Egresado:\t\t"); printf("%.1f %%\t\t\t%i\t",tipo_usuario_formula("Egresado",numeral_candidato)*15,lista_votos_usuario[3]); asteriscos(tipo_usuario_formula("Egresado",numeral_candidato)*15);  printf("\n\n");
     printf("\n\n");
 
     system("pause");
